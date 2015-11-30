@@ -1,6 +1,6 @@
 # Rifter
 
-Rifter stands for: Rifter Is a Fitting Tool, Entirely in Ruby, which is a recursive acronym, and that's fancy.
+Rifter stands for: "Rifter Is a Fitting Tool, Entirely in Ruby", which is a recursive acronym, how cool is that?
 It is an engine for fitting ships in Eve Online game, packaged as a Ruby gem.
 
 ## Installation
