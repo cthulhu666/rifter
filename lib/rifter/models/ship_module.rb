@@ -91,23 +91,6 @@ module Rifter
         ShipModule.all.inject([]) { |a, s| a << s.effects; a }.flatten.uniq
       end
 
-      def clear_codes
-        ShipModule.each { |m| m.update_attribute :code, nil }
-      end
-
-      def assign_codes
-        %i(hi med lo rig).each do |pow|
-          ShipModule.relevant.power(pow)
-            .order_by('group asc', 'miscellaneous_attributes.meta_level asc')
-            .each_with_index do |mod, i|
-            gray = "%0#{Genotype::DEFAULT_LENGTH}b" % i.to_gray
-            mod.update_attribute :code, gray
-          end
-        end
-      end
-
-      deprecate :assign_codes
-
       def mark_relevant_modules
         ShipModule.each do |mod|
           mod.update_attribute(:relevant, !mod.group.in?(IRRELEVANT_GROUPS) && !(mod.name =~ /^capital/i))
