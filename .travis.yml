@@ -7,4 +7,3 @@ services:
 before_script:
   - curl -L "$DB_DUMP_URL" | bunzip2 > sqlite-latest.sqlite
   - bundle exec rake importer:run
-

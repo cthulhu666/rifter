@@ -1,3 +1,5 @@
+require 'sequel'
+
 module Rifter
   class Importer
     SLOT_EFFECT_NAMES = %w(loPower medPower hiPower rigSlot)
@@ -60,7 +62,6 @@ module Rifter
     end
 
     def truncate
-      ShipFittingDocument.delete_all
       Ship.delete_all
       ShipModule.delete_all
       Charge.delete_all
