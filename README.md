@@ -5,33 +5,90 @@
 Rifter stands for: "Rifter Is a Fitting Tool, Entirely in Ruby", which is a recursive acronym, how cool is that?
 It is an engine for fitting ships in Eve Online game, packaged as a Ruby gem.
 
+## Overview
+
+This gem is extracted from [GenEFT](https://geneft.com) application.
+The engine is only partially implemented.
+Only some subset of ships is supported (no T3 hulls, no capital ships, no mining/hauling hulls).
+Only some subset of effects is supported (no shield/armor reps, work in progress).
+Implants, boosters and fleet effects are not supported and I don't plan to implement them in near future.
+
+## Acknowledgments
+
+I took some code from [PyFa](https://github.com/DarkFenX/Pyfa) and translated to Ruby
+- mostly related to calculation of turrets/missiles damage.
+these fragments are marked with links to respective code pieces on PyFa github page.
+
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rifter'
+gem 'rifter', github: 'cthulhu666/rifter'
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install rifter
+As this gem is pretty much niche, it is not published to RubyGems.
 
 ## Usage
 
-TODO: Write usage instructions here
+### Console
+
+1. checkout repo
+2. download eve database dump from https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2 and unzip it
+3. run importer: `MONGOID_ENV=development MONGODB_URL=localhost bundle exec rake importer:run`
+4. run specs: `MONGODB_URL=localhost bundle exec rake`
+
+if everything works, run console: `MONGODB_URL=localhost ./bin/console`
+
+Rifter console can serve as a ship/modules brower.
+Check which cruisers are fastest:
+
+```ruby
+q = Ship.cruisers.order( ['miscellaneous_attributes.max_velocity', :desc] )
+q.limit(5).map { |s| [s.name, s.max_velocity] }
+```
+
+Test an actual fitting:
+
+```ruby
+f = ShipFitting.new(ship: Ship.find_by(name: 'Rifter'), character: Character.perfect_skills_character)
+3.times { f.fit_module('150mm Light AutoCannon II').charge = Charge.find_by(name: 'EMP S') }
+f.calculate_effects
+```
+
+Check how much DPS it does:
+```ruby
+f.turrets_dps
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake false` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+1. checkout repo
+2. download eve database dump from https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2 and unzip it
+3. run importer: `MONGOID_ENV=test MONGODB_URL=localhost bundle exec rake importer:run`
+4. run specs: `MONGODB_URL=localhost bundle exec rake`
+5. ...
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+## Word about specs
+
+Specs require a complete database import.
+It is unusual, but as this code is so much grown together with data, I consider it a good decision.
+I use doubles sparingly and operate on real ships/modules most of the time.
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/rifter.
 
+I welcome all help: bugfixes, implementing new features, just remember to write specs.
+
+## Copyright Notice
+
+EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of CCP hf.
+All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable features
+ of the intellectual property relating to these trademarks are likewise the intellectual property of CCP hf.
+EVE Online and the EVE logo are the registered trademarks of CCP hf.
+All rights are reserved worldwide. All other trademarks are the property of their respective owners.
