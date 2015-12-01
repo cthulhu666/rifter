@@ -1,4 +1,9 @@
 language: ruby
 rvm:
-  - 2.2.2
+  - 2.2.3
 before_install: gem install bundler -v 1.10.6
+services:
+  - mongodb
+before_script:
+  - curl -L "https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2" | bunzip2 > sqlite-latest.sqlite
+  - MONGODB_HOST=localhost bundle exec importer:run
