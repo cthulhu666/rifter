@@ -1,5 +1,7 @@
 # Rifter
 
+[![Build Status](https://travis-ci.org/cthulhu666/rifter.svg?branch=master)](https://travis-ci.org/cthulhu666/rifter)
+
 Rifter stands for: "Rifter Is a Fitting Tool, Entirely in Ruby", which is a recursive acronym, how cool is that?
 It is an engine for fitting ships in Eve Online game, packaged as a Ruby gem.
 
