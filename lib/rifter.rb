@@ -1,6 +1,7 @@
 require 'hashie'
 require 'active_support/all'
 require 'mongoid'
+require 'descriptive_statistics'
 
 require 'rifter/version'
 require 'rifter/damage'
