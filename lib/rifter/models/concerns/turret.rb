@@ -1,6 +1,7 @@
 module Rifter
   module Turret
     extend ActiveSupport::Concern
+    using Refinements
 
     WEAPON_TYPES = %w(pulse beam autocannon artillery blaster railgun)
     # result of `ShipModule.where(:charge_size.exists => true).pluck(:weapon_type).uniq`
@@ -60,7 +61,7 @@ module Rifter
 
       # see https://github.com/DarkFenX/Pyfa/blob/d60b288e0ea7313f5d6aeb476430d0d928f6aa79/eos/graph/fitDps.py#L111
       def chance_to_hit(target:, distance:, angle:, velocity:)
-        transversal = Math.sin(Math.to_rad(angle)) * velocity
+        transversal = Math.sin(angle.to_rad) * velocity
         tracking_eq = (((transversal / (distance * tracking_speed)) *
             (optimal_sig_radius / target.signature_radius)) ** 2)
         range_eq = (([0, distance - optimal].max) / falloff) ** 2

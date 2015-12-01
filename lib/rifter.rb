@@ -6,6 +6,7 @@ require "rifter/version"
 require "rifter/damage"
 require "rifter/damage_profile"
 require "rifter/modifiers"
+require "rifter/refinements"
 
 Dir[File.dirname(__FILE__) + '/rifter/models/concerns/*.rb'].each { |file| require file }
 
