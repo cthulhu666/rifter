@@ -1,5 +1,7 @@
-include Rifter
+require 'rifter'
 require 'rifter/importer'
+
+include Rifter
 
 namespace :importer do
   task :run do
@@ -12,3 +14,4 @@ namespace :importer do
     Drone.classify_drones
   end
 end
+
