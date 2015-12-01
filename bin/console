@@ -15,4 +15,6 @@ require 'irb'
 Mongoid.load!('mongoid.yml', :development)
 include Rifter
 
-IRB.start
+require 'pry'
+Pry.start
+
