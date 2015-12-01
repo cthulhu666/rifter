@@ -1,6 +1,27 @@
 require 'spec_helper'
 
 RSpec.describe 'Energy weapons' do
+  context 'Abaddon' do
+    let :fit do
+      f = ShipFitting.new(ship: Ship.find_by(name: 'Abaddon'), character: character)
+      8.times { f.fit_module('Mega Pulse Laser II').charge = charge }
+      f
+    end
+
+    let :character do
+      Character.perfect_skills_character
+    end
+
+    let :charge do
+      Charge.find_by(name: 'Multifrequency L')
+    end
+
+    before { fit.calculate_effects }
+
+    it { expect(fit.turrets_volley.sum).to be_within(0.1).of(2732.4) }
+    it { expect(fit.turrets_dps.sum).to be_within(0.1).of(481.9) }
+  end
+
   context 'Imperial Navy Slicer' do
     let :fit do
       ShipFitting.new(ship: Ship.find_by(name: 'Imperial Navy Slicer'), character: character)
