@@ -1,10 +1,7 @@
 module Rifter
-module Effects
-  class SpeedBoostFactorCalculator < Effect
-
-    # NOT IMPLEMENTED
-
+  module Effects
+    class SpeedBoostFactorCalculator < Effect
+      # NOT IMPLEMENTED
+    end
   end
-end
-
 end

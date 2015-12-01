@@ -1,8 +1,7 @@
 module Rifter
-module ShipModules
-  class RigLauncher < ShipModule
-    include Rig
+  module ShipModules
+    class RigLauncher < ShipModule
+      include Rig
+    end
   end
-end
-
 end

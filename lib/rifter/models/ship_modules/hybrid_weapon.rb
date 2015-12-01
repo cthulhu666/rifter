@@ -1,18 +1,17 @@
 module Rifter
-module ShipModules
-  class HybridWeapon < ShipModule
-    include Turret
+  module ShipModules
+    class HybridWeapon < ShipModule
+      include Turret
 
-    def infer_weapon_type
-      ratio = miscellaneous_attributes[:max_range] / miscellaneous_attributes[:falloff]
-      case ratio
+      def infer_weapon_type
+        ratio = miscellaneous_attributes[:max_range] / miscellaneous_attributes[:falloff]
+        case ratio
         when 0..1
           'blaster'
         else
           'railgun'
+        end
       end
     end
   end
-end
-
 end

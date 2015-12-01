@@ -7,7 +7,11 @@ module HasCharges
     has_and_belongs_to_many :charges, class_name: 'Rifter::Charge'
 
     before_save do
-      self.charge_size = miscellaneous_attributes.charge_size.to_i rescue nil
+      self.charge_size = begin
+                           miscellaneous_attributes.charge_size.to_i
+                         rescue
+                           nil
+                         end
     end
 
     def charge_valid?(charge)
@@ -16,9 +20,8 @@ module HasCharges
 
     class << self
       def update_charge_size
-        where(charge_size: nil).each { |c| c.save }
+        where(charge_size: nil).each(&:save)
       end
     end
   end
-
 end

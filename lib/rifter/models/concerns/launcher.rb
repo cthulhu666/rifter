@@ -7,8 +7,8 @@ module Rifter
 
       field :weapon_type, type: String
 
-      index({charge_ids: 1}) # TODO: move to HasCharges, but confirm it's necessary first
-      index({weapon_type: 1})
+      index(charge_ids: 1) # TODO: move to HasCharges, but confirm it's necessary first
+      index(weapon_type: 1)
     end
 
     ATTRIBUTES = %i(aoe_cloud_size aoe_velocity explosion_delay max_velocity aoe_damage_reduction_factor aoe_damage_reduction_sensitivity)
@@ -30,7 +30,6 @@ module Rifter
       group.delete(' ').underscore
     end
 
-
     module FittedModuleInstanceMethods
       def charges_per_reload
         (ship_module.capacity / charge.volume).floor
@@ -38,7 +37,7 @@ module Rifter
 
       # per second, [without reloads, with_reloads]
       def rate_of_fire
-        without_reload = (speed / 1000.0) ** -1
+        without_reload = (speed / 1000.0)**-1
         cpr = charges_per_reload
         t = speed * cpr + reload_time
         with_reload = (t / 1000.0 / cpr)**-1
@@ -46,7 +45,10 @@ module Rifter
       end
 
       def reload_time
-        ship_module.miscellaneous_attributes.reload_time rescue 10 # if not specified, then 10s, according to PyFa
+        ship_module.miscellaneous_attributes.reload_time
+      rescue
+        10
+        # if not specified, then 10s, according to PyFa
       end
 
       def volley
@@ -71,8 +73,6 @@ module Rifter
       def range
         explosion_delay * max_velocity / 1000.0
       end
-
     end
-
   end
 end

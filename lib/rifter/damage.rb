@@ -1,6 +1,5 @@
 module Rifter
   class Damage
-
     DAMAGE_TYPES = %i(em thermal kinetic explosive)
 
     def initialize(dmg = {})
@@ -11,12 +10,11 @@ module Rifter
 
     def *(multiplier)
       case multiplier
-        when Hash
-          Damage.new(@value.map { |k, v| [k, v * (multiplier[k] || 1.0)] })
-        else
-          Damage.new(@value.map { |k, v| [k, v * multiplier] })
+      when Hash
+        Damage.new(@value.map { |k, v| [k, v * (multiplier[k] || 1.0)] })
+      else
+        Damage.new(@value.map { |k, v| [k, v * multiplier] })
       end
-
     end
 
     def +(damage)
@@ -48,7 +46,7 @@ module Rifter
       drs = launcher.aoe_damage_reduction_sensitivity
 
       sig_radius_factor = s / e
-      velocity_factor = (vt / e * s / ve)**(Math.log(drf)/Math.log(5.5))
+      velocity_factor = (vt / e * s / ve)**(Math.log(drf) / Math.log(5.5))
 
       self * [1, sig_radius_factor, velocity_factor].min
     end
@@ -57,16 +55,15 @@ module Rifter
     def calculate_turret_damage(turret:, target:, distance:, angle:, velocity:)
       chance_to_hit = turret.chance_to_hit(target: target, distance: distance, angle: angle, velocity: velocity)
       if chance_to_hit > 0.01
-        multiplier = (chance_to_hit ** 2 + chance_to_hit + 0.0499) / 2
+        multiplier = (chance_to_hit**2 + chance_to_hit + 0.0499) / 2
       else
         multiplier = chance_to_hit * 3
       end
-      #if dmg_scaling = turret['turret_damage_scaling_radius']
+      # if dmg_scaling = turret['turret_damage_scaling_radius']
       #  targetSigRad = data["signatureRadius"]
       #        multiplier = min(1, (float(targetSigRad) / dmgScaling) ** 2)
-      #end
+      # end
       self * multiplier
     end
-
   end
 end

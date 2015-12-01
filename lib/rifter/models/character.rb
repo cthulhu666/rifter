@@ -23,7 +23,6 @@ module Rifter
       def effects
         @effects ||= skill.the_effects.select { |e| e.respond_to?(:skill_effect) }
       end
-
     end
 
     embeds_many :character_skills, class_name: 'Rifter::Character::CharacterSkill'
@@ -82,6 +81,5 @@ module Rifter
     def char_sheet
       @character_sheet ||= api.character_sheet(character_id: eve_id)
     end
-
   end
 end

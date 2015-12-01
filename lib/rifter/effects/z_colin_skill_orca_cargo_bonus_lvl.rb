@@ -1,8 +1,7 @@
 module Rifter
-module Effects
-  class ZColinSkillOrcaCargoBonusLvl < Effect
-    # TODO generated class
+  module Effects
+    class ZColinSkillOrcaCargoBonusLvl < Effect
+      # TODO: generated class
+    end
   end
-end
-
 end

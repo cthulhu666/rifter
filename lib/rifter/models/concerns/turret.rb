@@ -12,11 +12,15 @@ module Rifter
 
       has_and_belongs_to_many :charges
 
-      index({charge_ids: 1})
-      index({weapon_type: 1})
+      index(charge_ids: 1)
+      index(weapon_type: 1)
 
       before_save do
-        self.charge_size = miscellaneous_attributes.charge_size.to_i rescue nil
+        self.charge_size = begin
+                             miscellaneous_attributes.charge_size.to_i
+                           rescue
+                             nil
+                           end
       end
     end
 
@@ -25,7 +29,7 @@ module Rifter
     end
 
     def infer_weapon_type
-      raise "Implement in subclasses"
+      fail 'Implement in subclasses'
     end
 
     def setup(fitted_module)
@@ -52,7 +56,7 @@ module Rifter
       end
 
       def rof
-        (speed / 1000.0) ** -1
+        (speed / 1000.0)**-1
       end
 
       def dps
@@ -63,11 +67,10 @@ module Rifter
       def chance_to_hit(target:, distance:, angle:, velocity:)
         transversal = Math.sin(angle.to_rad) * velocity
         tracking_eq = (((transversal / (distance * tracking_speed)) *
-            (optimal_sig_radius / target.signature_radius)) ** 2)
-        range_eq = (([0, distance - optimal].max) / falloff) ** 2
-        0.5 ** (tracking_eq + range_eq)
+            (optimal_sig_radius / target.signature_radius))**2)
+        range_eq = (([0, distance - optimal].max) / falloff)**2
+        0.5**(tracking_eq + range_eq)
       end
     end
-
   end
 end

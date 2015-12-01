@@ -31,16 +31,15 @@ module Rifter
       avg = doc.xpath("//type[@id=#{type_id}]/sell/avg").text.to_f
       if volume > 100
         update_attributes(
-            avg_sell_price: avg,
-            market_data_updated_at: DateTime.now
+          avg_sell_price: avg,
+          market_data_updated_at: DateTime.now
         )
       else
         update_attributes(
-            avg_sell_price: nil,
-            market_data_updated_at: DateTime.now
+          avg_sell_price: nil,
+          market_data_updated_at: DateTime.now
         )
       end
     end
-
   end
 end

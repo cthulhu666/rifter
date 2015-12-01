@@ -1,9 +1,6 @@
 module Rifter
-module Effects
-
-  class ShieldManagementSkillBoostShieldCapacityBonus < Effect
-
+  module Effects
+    class ShieldManagementSkillBoostShieldCapacityBonus < Effect
+    end
   end
-end
-
 end

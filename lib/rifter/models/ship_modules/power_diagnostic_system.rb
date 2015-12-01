@@ -1,14 +1,11 @@
 module Rifter
-module ShipModules
-  class PowerDiagnosticSystem < ShipModule
+  module ShipModules
+    class PowerDiagnosticSystem < ShipModule
+      # TODO: move to effects !!
 
-    # TODO move to effects !!
-
-    def shield_capacity_multiplier
-      miscellaneous_attributes.shield_capacity_multiplier
+      def shield_capacity_multiplier
+        miscellaneous_attributes.shield_capacity_multiplier
+      end
     end
-
   end
-end
-
 end

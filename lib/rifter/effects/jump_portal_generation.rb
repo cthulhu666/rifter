@@ -1,8 +1,7 @@
 module Rifter
-module Effects
-  class JumpPortalGeneration < Effect
-    # TODO generated class
+  module Effects
+    class JumpPortalGeneration < Effect
+      # TODO: generated class
+    end
   end
-end
-
 end

@@ -1,22 +1,19 @@
 module Rifter
-module Effects
-  class EvasiveManeuveringAgilityBonusPostPercentAgilityShip < Effect
+  module Effects
+    class EvasiveManeuveringAgilityBonusPostPercentAgilityShip < Effect
+      description 'Evasive Maneuvering, Spaceship Command skills; Rig Anchor'
 
-    description "Evasive Maneuvering, Spaceship Command skills; Rig Anchor"
-
-    def effect(attrs, fitting:, fitted_module:)
-      fitting.boost_attribute(
+      def effect(_attrs, fitting:, fitted_module:)
+        fitting.boost_attribute(
           :agility,
           miscellaneous_attributes.agility_bonus,
           stacking_penalty: true
-      )
-    end
+        )
+      end
 
-    def skill_effect(attrs, fitting:, skill_lvl:)
-      fitting.boost_attribute(:agility, miscellaneous_attributes.agility_bonus * skill_lvl)
+      def skill_effect(_attrs, fitting:, skill_lvl:)
+        fitting.boost_attribute(:agility, miscellaneous_attributes.agility_bonus * skill_lvl)
+      end
     end
-
   end
-end
-
 end

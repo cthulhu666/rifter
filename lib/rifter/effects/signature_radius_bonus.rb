@@ -1,8 +1,7 @@
 module Rifter
-module Effects
-  class SignatureRadiusBonus < Effect
-    # TODO generated class
+  module Effects
+    class SignatureRadiusBonus < Effect
+      # TODO: generated class
+    end
   end
-end
-
 end

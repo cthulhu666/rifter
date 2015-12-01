@@ -1,8 +1,7 @@
 module Rifter
-module Effects
-  class NavigationSkillBoostVelocityBonus < Effect
-    # unused
+  module Effects
+    class NavigationSkillBoostVelocityBonus < Effect
+      # unused
+    end
   end
-end
-
 end

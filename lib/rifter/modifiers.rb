@@ -1,8 +1,6 @@
 module Rifter
   module Modifiers
-
     def apply_modifiers(context = self)
-
       evaluate_lambdas(modifiers)
       the_modifiers = percentages_to_multipliers(modifiers)
 
@@ -20,7 +18,7 @@ module Rifter
         set_value(context, m[0], original_val * m[1])
       end
 
-      penalized_multipliers.group_by { |m| m.first }.each do |attr, arr|
+      penalized_multipliers.group_by(&:first).each do |attr, arr|
         increases = arr.select { |m| m[1] >= 1.0 }.sort_by { |m| -m[1] }
         decreases = arr.select { |m| m[1] < 1.0 }.sort_by { |m| m[1] }
         [increases, decreases].each do |a|
@@ -31,11 +29,10 @@ module Rifter
           end
         end
       end
-
     end
 
     def boost_attribute(name, value, type: :percent, stacking_penalty: false, nested_property: nil)
-      #TODO: Rails.logger.debug "Boosting attribute: #{self} #{name} #{value} #{type}"
+      # TODO: Rails.logger.debug "Boosting attribute: #{self} #{name} #{value} #{type}"
       modifiers << [[name, nested_property], value, stacking_penalty, type]
     end
 
@@ -70,6 +67,5 @@ module Rifter
       modifiers
     end
     private :percentages_to_multipliers
-
   end
 end

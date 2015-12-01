@@ -1,11 +1,10 @@
 module Rifter
   class ShipModule
-
     IRRELEVANT_GROUPS = ['Cargo Scanner', 'Ship Scanner', 'Survey Scanner', 'QA Module', 'Entosis Link', 'Missile Launcher Bomb', 'Countermeasure Launcher']
 
     DAMAGE_TYPES = Damage::DAMAGE_TYPES # for backward compatibility
 
-    STACKING_PENALTY = (0..7).map { |i| Math::E**(-(i/2.67)**2) } # TODO: remove
+    STACKING_PENALTY = (0..7).map { |i| Math::E**(-(i / 2.67)**2) } # TODO: remove
 
     cattr_accessor :attributes_to_copy
 
@@ -17,7 +16,7 @@ module Rifter
     include RequiresSkills
     include HasEffects
 
-    #WEAPON_TYPES = ShipModule.pluck(:weapon_type).compact.uniq
+    # WEAPON_TYPES = ShipModule.pluck(:weapon_type).compact.uniq
 
     field :name, type: String
     field :group, type: String
@@ -30,7 +29,7 @@ module Rifter
     field :capacity, type: Float
     field :base_price, type: Float
     field :published, type: Boolean
-    # TODO include EveItem
+    # TODO: include EveItem
 
     # typeID in db dump
     field :type_id
@@ -45,8 +44,8 @@ module Rifter
     scope :faction, -> { where(faction: true) }
     scope :deadspace, -> { where(deadspace: true) }
 
-    scope :max_pg, ->(v) { self.or ['miscellaneous_attributes.power' => {:$lte => v}], ['miscellaneous_attributes.power' => nil] }
-    scope :max_cpu, ->(v) { self.or ['miscellaneous_attributes.cpu' => {:$lte => v}], ['miscellaneous_attributes.cpu' => nil] }
+    scope :max_pg, ->(v) { self.or ['miscellaneous_attributes.power' => { :$lte => v }], ['miscellaneous_attributes.power' => nil] }
+    scope :max_cpu, ->(v) { self.or ['miscellaneous_attributes.cpu' => { :$lte => v }], ['miscellaneous_attributes.cpu' => nil] }
 
     scope :published, -> { where(published: true) }
     default_scope -> { published }
@@ -69,11 +68,11 @@ module Rifter
     embeds_one :miscellaneous_attributes, class_name: 'Rifter::MiscellaneousAttributes'
 
     # indices
-    index({slot: 1}, unique: false)
-    index({type_id: 1}, unique: true)
-    index({relevant: 1}, unique: false)
-    index({published: 1}, unique: false)
-    index({'miscellaneous_attributes.meta_level' => 1}, unique: false)
+    index({ slot: 1 }, unique: false)
+    index({ type_id: 1 }, unique: true)
+    index({ relevant: 1 }, unique: false)
+    index({ published: 1 }, unique: false)
+    index({ 'miscellaneous_attributes.meta_level' => 1 }, unique: false)
 
     class << self
       def [](name)
@@ -99,8 +98,8 @@ module Rifter
       def assign_codes
         %i(hi med lo rig).each do |pow|
           ShipModule.relevant.power(pow)
-              .order_by('group asc', 'miscellaneous_attributes.meta_level asc')
-              .each_with_index do |mod, i|
+            .order_by('group asc', 'miscellaneous_attributes.meta_level asc')
+            .each_with_index do |mod, i|
             gray = "%0#{Genotype::DEFAULT_LENGTH}b" % i.to_gray
             mod.update_attribute :code, gray
           end
@@ -116,7 +115,7 @@ module Rifter
       end
 
       def setup_weapons
-        self.each do |mod|
+        each do |mod|
           if mod.fields['weapon_type'].present?
             mod.update_attribute :weapon_type, mod.infer_weapon_type
           end
@@ -126,7 +125,7 @@ module Rifter
       FACTION_PREFIXES = ['Ammatar Navy', 'Caldari Navy', 'Dark Blood ', 'Domination', 'Dread Guristas', 'Federation Navy', 'Imperial Navy', 'Khanid Navy', 'Republic Fleet', 'Shadow Serpentis', 'Sisters', 'Syndicate', 'Thukker', 'True Sansha']
 
       def mark_faction_modules
-        self.meta_level(6..9).each do |mod|
+        meta_level(6..9).each do |mod|
           if FACTION_PREFIXES.any? { |prefix| mod.name.starts_with?(prefix) }
             mod.update_attribute :faction, true
           end
@@ -134,7 +133,7 @@ module Rifter
       end
 
       def mark_deadspace_modules
-        self.meta_level(10..20).each do |mod|
+        meta_level(10..20).each do |mod|
           if mod.name =~ /^(Gist|Corp|Pith|Cent|Core)/
             mod.update_attribute :deadspace, true
           end
@@ -158,7 +157,6 @@ module Rifter
       def copy_attributes(*attrs)
         self.attributes_to_copy = attrs
       end
-
     end
 
     def power
@@ -198,9 +196,9 @@ module Rifter
     end
 
     def increase_meta_level(filter: -> (q) { q })
-      q = self.class.meta_level(meta_level..1.0/0.0)
+      q = self.class.meta_level(meta_level..1.0 / 0.0)
       q = q.weapon_type(weapon_type) if fields['weapon_type'].present?
-      q = filter.(q)
+      q = filter.call(q)
       q.random
     end
 
@@ -209,6 +207,5 @@ module Rifter
         fitted_module[s] = miscellaneous_attributes[s]
       end unless attributes_to_copy.nil?
     end
-
   end
 end

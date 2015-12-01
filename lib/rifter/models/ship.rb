@@ -6,13 +6,13 @@ module Rifter
     store_in collection: 'ships'
 
     ENABLED_GROUPS = [
-        "Rookie ship", "Frigate", "Assault Frigate", "Destroyer",
-        "Cruiser", "Attack Battlecruiser", "Combat Battlecruiser", "Command Ship",
-        "Force Recon Ship", "Heavy Assault Cruiser", "Heavy Interdiction Cruiser",
-        "Battleship"]
+      'Rookie ship', 'Frigate', 'Assault Frigate', 'Destroyer',
+      'Cruiser', 'Attack Battlecruiser', 'Combat Battlecruiser', 'Command Ship',
+      'Force Recon Ship', 'Heavy Assault Cruiser', 'Heavy Interdiction Cruiser',
+      'Battleship']
 
-    FRIGATE_HULL = [/frigate/i, /destroyer/i, "Interceptor", "Electronic Attack Ship", "Stealth Bomber", "Rookie ship"]
-    CRUISER_HULL = [/cruiser/i, "Combat Recon Ship", "Command Ship", "Force Recon Ship"]
+    FRIGATE_HULL = [/frigate/i, /destroyer/i, 'Interceptor', 'Electronic Attack Ship', 'Stealth Bomber', 'Rookie ship']
+    CRUISER_HULL = [/cruiser/i, 'Combat Recon Ship', 'Command Ship', 'Force Recon Ship']
 
     class Trait
       include Mongoid::Document
@@ -28,7 +28,7 @@ module Rifter
       class << self
         def setup
           Ship.each do |ship|
-            ship.traits.each { |t| t.setup }
+            ship.traits.each(&:setup)
           end
         end
       end
@@ -41,9 +41,9 @@ module Rifter
 
       def trait
         @trait ||= begin
-          Traits::const_get(class_name).new(bonus: bonus)
+          Traits.const_get(class_name).new(bonus: bonus)
         rescue NameError => e
-          #TODO: Rails.logger.error e
+          # TODO: Rails.logger.error e
           nil
         end
       end
@@ -67,7 +67,7 @@ module Rifter
     field :capacity, type: Float
     field :base_price, type: Float
     field :published, type: Boolean
-    # TODO include EveItem
+    # TODO: include EveItem
 
     # typeID in db dump
     field :type_id
@@ -76,8 +76,8 @@ module Rifter
 
     embeds_many :traits, class_name: 'Rifter::Ship::Trait'
 
-    validates :name, :presence => true
-    validates :group, :presence => true
+    validates :name, presence: true
+    validates :group, presence: true
 
     scope :group, ->(name) { where(:group.in => [name].flatten) }
 
@@ -99,19 +99,46 @@ module Rifter
     end
 
     %w(shield_capacity signature_radius armor_hp max_velocity agility
-    capacitor_capacity upgrade_capacity drone_bandwidth drone_capacity).each do |s|
+       capacitor_capacity upgrade_capacity drone_bandwidth drone_capacity).each do |s|
       delegate s, to: :miscellaneous_attributes
     end
 
     before_save do
-      self.power_output = miscellaneous_attributes.power_output.to_f rescue 0
-      self.cpu_output = miscellaneous_attributes.cpu_output.to_f rescue 0
-      self.lo_slots = miscellaneous_attributes.low_slots.to_i rescue 0
-      self.med_slots = miscellaneous_attributes.med_slots.to_i rescue 0
-      self.hi_slots = miscellaneous_attributes.hi_slots.to_i rescue 0
-      self.rig_slots = miscellaneous_attributes.rig_slots.to_i rescue 0
-      self.rig_size = miscellaneous_attributes.rig_size.to_i rescue nil
-
+      self.power_output = begin
+                            miscellaneous_attributes.power_output.to_f
+                          rescue
+                            0
+                          end
+      self.cpu_output = begin
+                          miscellaneous_attributes.cpu_output.to_f
+                        rescue
+                          0
+                        end
+      self.lo_slots = begin
+                        miscellaneous_attributes.low_slots.to_i
+                      rescue
+                        0
+                      end
+      self.med_slots = begin
+                         miscellaneous_attributes.med_slots.to_i
+                       rescue
+                         0
+                       end
+      self.hi_slots = begin
+                        miscellaneous_attributes.hi_slots.to_i
+                      rescue
+                        0
+                      end
+      self.rig_slots = begin
+                         miscellaneous_attributes.rig_slots.to_i
+                       rescue
+                         0
+                       end
+      self.rig_size = begin
+                        miscellaneous_attributes.rig_size.to_i
+                      rescue
+                        nil
+                      end
     end
 
     class << self
@@ -138,8 +165,8 @@ module Rifter
       def _calculate_average_target(group)
         q = group(group)
         Hashie::Mash.new(
-            signature_radius: q.map { |s| s.signature_radius }.mean,
-            max_velocity: q.map { |s| s.max_velocity }.mean
+          signature_radius: q.map(&:signature_radius).mean,
+          max_velocity: q.map(&:max_velocity).mean
         )
       end
 
@@ -169,28 +196,28 @@ module Rifter
 
     def shield_resonances
       {
-          em: shield_em_damage_resonance,
-          thermal: shield_thermal_damage_resonance,
-          kinetic: shield_kinetic_damage_resonance,
-          explosive: shield_explosive_damage_resonance,
+        em: shield_em_damage_resonance,
+        thermal: shield_thermal_damage_resonance,
+        kinetic: shield_kinetic_damage_resonance,
+        explosive: shield_explosive_damage_resonance
       }
     end
 
     def armor_resonances
       {
-          em: armor_em_damage_resonance,
-          thermal: armor_thermal_damage_resonance,
-          kinetic: armor_kinetic_damage_resonance,
-          explosive: armor_explosive_damage_resonance,
+        em: armor_em_damage_resonance,
+        thermal: armor_thermal_damage_resonance,
+        kinetic: armor_kinetic_damage_resonance,
+        explosive: armor_explosive_damage_resonance
       }
     end
 
     def hull_resonances
       {
-          em: hull_em_damage_resonance,
-          thermal: hull_thermal_damage_resonance,
-          kinetic: hull_kinetic_damage_resonance,
-          explosive: hull_explosive_damage_resonance,
+        em: hull_em_damage_resonance,
+        thermal: hull_thermal_damage_resonance,
+        kinetic: hull_kinetic_damage_resonance,
+        explosive: hull_explosive_damage_resonance
       }
     end
 
@@ -210,42 +237,40 @@ module Rifter
     end
 
     def turret_weapon_types
-      ["pulse", "beam", "autocannon", "artillery", "blaster", "railgun"]
+      %w(pulse beam autocannon artillery blaster railgun)
     end
 
     def launcher_weapon_types
       case group
-        when "Stealth Bomber"
-          %w(missile_launcher_torpedo missile_launcher_bomb)
-        when *FRIGATE_HULL
-          %w(missile_launcher_rocket missile_launcher_light)
-        when *CRUISER_HULL
-          %w(missile_launcher_rocket missile_launcher_light missile_launcher_rapid_light
-            missile_launcher_heavy missile_launcher_heavy_assault)
-        else
-          %w(missile_launcher_rocket missile_launcher_light missile_launcher_rapid_light
-            missile_launcher_heavy missile_launcher_heavy_assault missile_launcher_cruise
-            missile_launcher_torpedo missile_launcher_rapid_heavy)
+      when 'Stealth Bomber'
+        %w(missile_launcher_torpedo missile_launcher_bomb)
+      when *FRIGATE_HULL
+        %w(missile_launcher_rocket missile_launcher_light)
+      when *CRUISER_HULL
+        %w(missile_launcher_rocket missile_launcher_light missile_launcher_rapid_light
+           missile_launcher_heavy missile_launcher_heavy_assault)
+      else
+        %w(missile_launcher_rocket missile_launcher_light missile_launcher_rapid_light
+           missile_launcher_heavy missile_launcher_heavy_assault missile_launcher_cruise
+           missile_launcher_torpedo missile_launcher_rapid_heavy)
       end
     end
 
     def validate_propulsion_mod_size(prop_mod, oversized: false)
       regex = case group
-                when *FRIGATE_HULL
-                  oversized ? /^(10|50)$/ : /^(1|5)$/
-                when /cruiser/i, 'Industrial', 'Command Ship', 'Force Recon Ship'
-                  oversized ? /^(100|500)$/ : /^(10|50)$/
-                when "Battleship", "Black Ops"
-                  /^(100|500)$/
-                else
-                  nil
+              when /cruiser/i, 'Industrial', 'Command Ship', 'Force Recon Ship'
+                oversized ? /^(100|500)$/ : /^(10|50)$/
+              when 'Battleship', 'Black Ops'
+                /^(100|500)$/
+              when *FRIGATE_HULL
+                oversized ? /^(10|50)$/ : /^(1|5)$/
               end
       (regex =~ prop_mod.name.match(/(\d{1,3})MN/)[1]) == 0
     end
 
-    # TODO temporary; btw all (.*)_slots should be moved to ShipFiting because of T3 cruisers
-    def drone_slots;
-      5;
+    # TODO: temporary; btw all (.*)_slots should be moved to ShipFiting because of T3 cruisers
+    def drone_slots
+      5
     end
 
     def scan_strength
@@ -258,6 +283,5 @@ module Rifter
     def max_target_range
       miscellaneous_attributes.max_target_range
     end
-
   end
 end

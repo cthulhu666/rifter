@@ -21,14 +21,14 @@ module Rifter
     embeds_one :miscellaneous_attributes, class_name: 'Rifter::MiscellaneousAttributes'
 
     scope :group, ->(g) { where(group: g) }
-    scope :relevant, -> { where(group: {'$in' => RELEVANT_GROUPS}) }
+    scope :relevant, -> { where(group: { '$in' => RELEVANT_GROUPS }) }
     scope :with_effect, -> (e) { where(:effects.in => [e]) }
 
     scope :published, -> { where(published: true) }
     default_scope -> { published }
 
-    index({type_id: 1}, unique: true)
-    index({published: 1}, unique: false)
+    index({ type_id: 1 }, unique: true)
+    index({ published: 1 }, unique: false)
 
     class << self
       def [](name)
@@ -47,17 +47,19 @@ module Rifter
         @effects = Hash.new do |h, key|
           h[key] = key.effects.map do |eff|
             klass = Effect.sanitize_effect_name(eff).camelcase
-            Effects.const_get(klass) rescue :nil
+            begin
+              Effects.const_get(klass)
+            rescue
+              :nil
+            end
           end.compact.freeze
         end
       end
 
-      def effects
-        @effects
-      end
+      attr_reader :effects
     end
 
-    # TODO synchronisation ?
+    # TODO: synchronisation ?
     init_effects_cache
 
     def inspect
@@ -67,6 +69,5 @@ module Rifter
     def to_s
       "#<#{self.class}: #{name}>"
     end
-
   end
 end

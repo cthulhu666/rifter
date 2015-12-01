@@ -1,10 +1,9 @@
 module Rifter
-module ShipModules
-  class ScanProbeLauncher < ShipModule
-    include Launcher
+  module ShipModules
+    class ScanProbeLauncher < ShipModule
+      include Launcher
 
-    # TODO generated class
+      # TODO: generated class
+    end
   end
-end
-
 end

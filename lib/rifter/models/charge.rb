@@ -15,7 +15,7 @@ module Rifter
     field :capacity, type: Float
     field :base_price, type: Float
     field :published, type: Boolean
-    # TODO include EveItem
+    # TODO: include EveItem
 
     # typeID in db dump
     field :type_id, type: Integer
@@ -31,16 +31,28 @@ module Rifter
     has_and_belongs_to_many :launchers, class_name: 'Rifter::ShipModule'
 
     scope :group, -> (name) { where(:group.in => [name].flatten) }
-    scope :projectile, -> { group(["Projectile Ammo", "Advanced Artillery Ammo", "Advanced Autocannon Ammo"]) }
-    scope :hybrid, -> { group(["Hybrid Charge", "Advanced Railgun Charge", "Advanced Blaster Charge"]) }
+    scope :projectile, -> { group(['Projectile Ammo', 'Advanced Artillery Ammo', 'Advanced Autocannon Ammo']) }
+    scope :hybrid, -> { group(['Hybrid Charge', 'Advanced Railgun Charge', 'Advanced Blaster Charge']) }
 
     delegate :explosion_delay, :max_velocity,
              to: :miscellaneous_attributes, allow_nil: true
 
     before_save do
-      self.charge_size = miscellaneous_attributes.charge_size.to_i rescue nil
-      self.tech_level = miscellaneous_attributes.tech_level.to_i rescue nil
-      self.launcher_group = miscellaneous_attributes.launcher_group.to_i rescue nil
+      self.charge_size = begin
+                           miscellaneous_attributes.charge_size.to_i
+                         rescue
+                           nil
+                         end
+      self.tech_level = begin
+                          miscellaneous_attributes.tech_level.to_i
+                        rescue
+                          nil
+                        end
+      self.launcher_group = begin
+                              miscellaneous_attributes.launcher_group.to_i
+                            rescue
+                              nil
+                            end
     end
 
     scope :charge_size, ->(size) { where(charge_size: size) }
@@ -49,12 +61,12 @@ module Rifter
     scope :published, -> { where(published: true) }
     default_scope -> { published }
 
-    #indices
-    index({type_id: 1}, unique: true)
-    index({charge_size: 1}, unique: false)
-    index({tech_level: 1}, unique: false)
-    index({launcher_ids: 1})
-    index({published: 1}, unique: false)
+    # indices
+    index({ type_id: 1 }, unique: true)
+    index({ charge_size: 1 }, unique: false)
+    index({ tech_level: 1 }, unique: false)
+    index(launcher_ids: 1)
+    index({ published: 1 }, unique: false)
 
     class << self
       def random
@@ -63,21 +75,20 @@ module Rifter
 
       def bind_to_launchers
         each do |charge|
-          if charge.launcher_group
-            q = ShipModule.where(group_id: charge.launcher_group)
-            q = q.where(charge_size: charge.charge_size.to_i) if charge.charge_size
-            q = q.tech_level(2) if charge.tech_level == 2
-            q.each { |l| l.charges << charge if l.respond_to?(:charges) }
-          end
+          next unless charge.launcher_group
+          q = ShipModule.where(group_id: charge.launcher_group)
+          q = q.where(charge_size: charge.charge_size.to_i) if charge.charge_size
+          q = q.tech_level(2) if charge.tech_level == 2
+          q.each { |l| l.charges << charge if l.respond_to?(:charges) }
         end
         # missiles need some special treatment
-        ShipModule.where(effects: {'$in' => ['useMissiles']}).each do |mod|
+        ShipModule.where(effects: { '$in' => ['useMissiles'] }).each do |mod|
           groups = mod.miscellaneous_attributes.attributes
-                       .select { |k, v| k =~ /^charge_group/ }.inject([]) do |arr, e|
+                   .select { |k, _v| k =~ /^charge_group/ }.inject([]) do |arr, e|
             arr << e.last
             arr
           end
-          mod.charges << Charge.where(group_id: {'$in' => groups})
+          mod.charges << Charge.where(group_id: { '$in' => groups })
         end
       end
     end
@@ -94,7 +105,7 @@ module Rifter
         sum += miscellaneous_attributes["#{dmg_type}_damage"]
         sum
       end
-        # TODO np ammo do Core Probe Launcher I
+    # TODO: np ammo do Core Probe Launcher I
     rescue
       0
     end
@@ -110,6 +121,5 @@ module Rifter
     def is_missile?
       (/(missile|rocket|torpedo)/i =~ group).present?
     end
-
   end
 end

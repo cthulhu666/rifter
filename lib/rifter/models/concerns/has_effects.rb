@@ -5,7 +5,11 @@ module Rifter
     def the_effects
       @the_effects ||= begin
         effects.map do |eff|
-          "Rifter::Effects::#{Effect.sanitize_effect_name(eff).camelcase}".constantize.new(self) rescue nil
+          begin
+            "Rifter::Effects::#{Effect.sanitize_effect_name(eff).camelcase}".constantize.new(self)
+          rescue
+            nil
+          end
         end.compact.freeze
       end
     end
@@ -15,6 +19,5 @@ module Rifter
         eff.effect(attrs, options) if eff.respond_to?(:effect)
       end
     end
-
   end
 end

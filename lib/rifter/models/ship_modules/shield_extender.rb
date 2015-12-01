@@ -1,8 +1,6 @@
 module Rifter
-module ShipModules
-  class ShieldExtender < ShipModule
-
+  module ShipModules
+    class ShieldExtender < ShipModule
+    end
   end
-end
-
 end

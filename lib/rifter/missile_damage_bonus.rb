@@ -1,13 +1,12 @@
 module Rifter
   class MissileDamageBonus
-
     SKILL_TO_LAUNCHER_CLASS_MAPPING = {
-        'Rockets' => ShipModules::MissileLauncherRocket,
-        'Light Missiles' => [ShipModules::MissileLauncherLight, ShipModules::MissileLauncherRapidLight],
-        'Heavy Missiles' => [ShipModules::MissileLauncherHeavy, ShipModules::MissileLauncherRapidHeavy],
-        'Heavy Assault Missiles' => [ShipModules::MissileLauncherHeavyAssault],
-        'Cruise Missiles' => [ShipModules::MissileLauncherCruise],
-        'Torpedoes' => [ShipModules::MissileLauncherTorpedo]
+      'Rockets' => ShipModules::MissileLauncherRocket,
+      'Light Missiles' => [ShipModules::MissileLauncherLight, ShipModules::MissileLauncherRapidLight],
+      'Heavy Missiles' => [ShipModules::MissileLauncherHeavy, ShipModules::MissileLauncherRapidHeavy],
+      'Heavy Assault Missiles' => [ShipModules::MissileLauncherHeavyAssault],
+      'Cruise Missiles' => [ShipModules::MissileLauncherCruise],
+      'Torpedoes' => [ShipModules::MissileLauncherTorpedo]
     }
 
     attr_reader :dmg_type, :skill, :skill_level, :fitting
@@ -21,7 +20,7 @@ module Rifter
 
     def apply
       fitting.fitted_modules(klass: launcher_klass).each do |m|
-        m.alpha_dmg *= {dmg_type => 1.0 + (skill.miscellaneous_attributes.damage_multiplier_bonus * skill_level / 100.0)}
+        m.alpha_dmg *= { dmg_type => 1.0 + (skill.miscellaneous_attributes.damage_multiplier_bonus * skill_level / 100.0) }
       end
     end
 
@@ -30,6 +29,5 @@ module Rifter
     def launcher_klass
       @klass ||= (SKILL_TO_LAUNCHER_CLASS_MAPPING[skill.name] || Ship)
     end
-
   end
 end

@@ -1,20 +1,18 @@
 require 'spec_helper'
 
-RSpec.describe "Character skills" do
-
-  #let :character do
+RSpec.describe 'Character skills' do
+  # let :character do
   #  Character.new do |c|
   #    c.character_skills.build(skill: Skill.find_by(name: 'Caldari Cruiser'), level: 5)
   #    c.character_skills.build(skill: Skill.find_by(name: 'Power Grid Management'), level: 5)
   #    c.character_skills.build(skill: Skill.find_by(name: 'Weapon Upgrades'), level: 5)
   #    c.character_skills.build(skill: Skill.find_by(name: 'Launcher Rigging'), level: 5)
   #  end
-  #end
+  # end
 
   let(:fit) { ShipFitting.new(ship: Ship.caracal, character: character) }
 
   describe 'Caldari cruiser skill boosts rate of fire on Caracal' do
-
     let :character do
       Character.new do |c|
         c.character_skills.build(skill: Skill.find_by(name: 'Caldari Cruiser'), level: 5)
@@ -27,16 +25,14 @@ RSpec.describe "Character skills" do
       fit.calculate_effects
     end
 
-    it {
+    it do
       fit.launchers.each do |launcher|
         expect(launcher.speed).to eq(4680.0)
       end
-    }
-
+    end
   end
 
   describe '#power_output' do
-
     let :character do
       Character.new do |c|
         c.character_skills.build(skill: Skill.find_by(name: 'Power Grid Management'), level: 5)
@@ -46,7 +42,6 @@ RSpec.describe "Character skills" do
     before(:each) { fit.calculate_effects }
 
     it { expect(fit.power_output).to eq(787.5) }
-
   end
 
   describe 'Hull Upgrades' do
@@ -72,5 +67,4 @@ RSpec.describe "Character skills" do
 
     it { expect(fit.hull_capacity).to eq(1750) }
   end
-
 end

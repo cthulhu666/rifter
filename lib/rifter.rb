@@ -2,29 +2,28 @@ require 'hashie'
 require 'active_support/all'
 require 'mongoid'
 
-require "rifter/version"
-require "rifter/damage"
-require "rifter/damage_profile"
-require "rifter/modifiers"
-require "rifter/refinements"
+require 'rifter/version'
+require 'rifter/damage'
+require 'rifter/damage_profile'
+require 'rifter/modifiers'
+require 'rifter/refinements'
 
 Dir[File.dirname(__FILE__) + '/rifter/models/concerns/*.rb'].each { |file| require file }
 
-require "rifter/models/ship"
-require "rifter/models/ship_module"
-require "rifter/models/character"
-require "rifter/models/skill"
-require "rifter/models/drone"
-require "rifter/models/required_skill"
-require "rifter/models/miscellaneous_attributes"
-require "rifter/models/charge"
+require 'rifter/models/ship'
+require 'rifter/models/ship_module'
+require 'rifter/models/character'
+require 'rifter/models/skill'
+require 'rifter/models/drone'
+require 'rifter/models/required_skill'
+require 'rifter/models/miscellaneous_attributes'
+require 'rifter/models/charge'
 
-require "rifter/effect"
-require "rifter/trait"
-require "rifter/ship_fitting"
+require 'rifter/effect'
+require 'rifter/trait'
+require 'rifter/ship_fitting'
 
 module Rifter
-
   module ShipModules
     Dir[File.dirname(__FILE__) + '/rifter/models/ship_modules/*.rb'].each do |file|
       base_name = File.basename(file).split('.').first
@@ -50,7 +49,6 @@ module Rifter
       autoload klass_name, "rifter/traits/#{base_name}"
     end
   end
-
 end
 
-require "rifter/missile_damage_bonus"
+require 'rifter/missile_damage_bonus'

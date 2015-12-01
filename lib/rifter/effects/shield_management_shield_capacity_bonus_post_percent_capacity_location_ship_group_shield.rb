@@ -1,22 +1,19 @@
 module Rifter
-module Effects
-  class ShieldManagementShieldCapacityBonusPostPercentCapacityLocationShipGroupShield < Effect
+  module Effects
+    class ShieldManagementShieldCapacityBonusPostPercentCapacityLocationShipGroupShield < Effect
+      description 'Core Defense Field Extender rig, Shield Management skill'
 
-    description "Core Defense Field Extender rig, Shield Management skill"
-
-    def effect(attrs, fitting:, fitted_module:)
-      fitting.boost_attribute(
+      def effect(_attrs, fitting:, fitted_module:)
+        fitting.boost_attribute(
           :shield_capacity,
           miscellaneous_attributes.shield_capacity_bonus)
-    end
+      end
 
-    def skill_effect(attrs, fitting:, skill_lvl:)
-      fitting.boost_attribute(
+      def skill_effect(_attrs, fitting:, skill_lvl:)
+        fitting.boost_attribute(
           :shield_capacity,
           miscellaneous_attributes.shield_capacity_bonus * skill_lvl)
+      end
     end
-
   end
-end
-
 end

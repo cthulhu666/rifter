@@ -28,7 +28,5 @@ module EveItem
         skip(rand(count)).first
       end
     end
-
   end
-
 end

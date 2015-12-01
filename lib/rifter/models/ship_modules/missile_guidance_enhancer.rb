@@ -1,8 +1,6 @@
 module Rifter
-module ShipModules
-  class MissileGuidanceEnhancer < ShipModule
-
+  module ShipModules
+    class MissileGuidanceEnhancer < ShipModule
+    end
   end
-end
-
 end

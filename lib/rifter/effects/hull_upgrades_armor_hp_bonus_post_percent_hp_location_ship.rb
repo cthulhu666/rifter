@@ -1,16 +1,14 @@
 module Rifter
-module Effects
-  class HullUpgradesArmorHpBonusPostPercentHpLocationShip < Effect
+  module Effects
+    class HullUpgradesArmorHpBonusPostPercentHpLocationShip < Effect
+      description 'Skill: Hull Upgrades'
 
-    description "Skill: Hull Upgrades"
-
-    def skill_effect(attrs, fitting:, skill_lvl:)
-      fitting.boost_attribute(
-                 :armor_capacity,
-                 miscellaneous_attributes.armor_hp_bonus * skill_lvl
-      )
+      def skill_effect(_attrs, fitting:, skill_lvl:)
+        fitting.boost_attribute(
+          :armor_capacity,
+          miscellaneous_attributes.armor_hp_bonus * skill_lvl
+        )
+      end
     end
   end
-end
-
 end

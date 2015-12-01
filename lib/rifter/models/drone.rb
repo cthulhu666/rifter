@@ -13,7 +13,6 @@ module Rifter
     scope :combat_drones, -> { group('Combat Drone') }
 
     class << self
-
       def classify_drones
         combat_drones.each do |d|
           drone_class =
@@ -21,24 +20,23 @@ module Rifter
                 'sentry'
               else
                 case d.volume
-                  when 5
-                    :light
-                  when 10
-                    :medium
-                  when 25
-                    :heavy
+                when 5
+                  :light
+                when 10
+                  :medium
+                when 25
+                  :heavy
                   # TODO: Gecko ?
                 end
               end
           d.update_attribute(:drone_class, drone_class)
         end
       end
-
     end
 
     def drone_class
       ActiveSupport::StringInquirer.new(
-          read_attribute(:drone_class)
+        read_attribute(:drone_class)
       )
     end
 
@@ -66,13 +64,12 @@ module Rifter
       end
 
       def rof
-        (drone.miscellaneous_attributes.turrets['speed'] / 1000.0) ** -1
+        (drone.miscellaneous_attributes.turrets['speed'] / 1000.0)**-1
       end
 
       def dps
         volley * rof
       end
     end
-
   end
 end

@@ -1,8 +1,7 @@
 module Rifter
-module Effects
-  class UseMissiles < Effect
-    # unused
+  module Effects
+    class UseMissiles < Effect
+      # unused
+    end
   end
-end
-
 end

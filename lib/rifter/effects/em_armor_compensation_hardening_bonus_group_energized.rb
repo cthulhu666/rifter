@@ -1,19 +1,16 @@
 module Rifter
-module Effects
-  class EmArmorCompensationHardeningBonusGroupEnergized < Effect
+  module Effects
+    class EmArmorCompensationHardeningBonusGroupEnergized < Effect
+      description 'EM Armor Compensation skill'
 
-    description "EM Armor Compensation skill"
-
-    def skill_effect(attrs, fitting:, skill_lvl:)
-      fitting.boost_module_attribute(
-        -> (m) { m.item.is_a?(ShipModules::ArmorPlatingEnergized) },
-        :resistance_bonus,
-        miscellaneous_attributes.hardening_bonus * skill_lvl,
-        nested_property: :em
-      )
+      def skill_effect(_attrs, fitting:, skill_lvl:)
+        fitting.boost_module_attribute(
+          -> (m) { m.item.is_a?(ShipModules::ArmorPlatingEnergized) },
+          :resistance_bonus,
+          miscellaneous_attributes.hardening_bonus * skill_lvl,
+          nested_property: :em
+        )
+      end
     end
-
   end
-end
-
 end

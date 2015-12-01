@@ -1,8 +1,7 @@
 module Rifter
   module ShipModules
     class AntiBallisticDefenseSystem < ShipModule
-      # TODO generated class
+      # TODO: generated class
     end
   end
-
 end

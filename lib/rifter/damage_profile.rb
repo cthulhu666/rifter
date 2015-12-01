@@ -1,6 +1,5 @@
 module Rifter
   class DamageProfile
-
     def initialize(h)
       h = h.symbolize_keys unless h.is_a?(DamageProfile)
       args = Damage::DAMAGE_TYPES.inject([]) { |a, e| a << h[e] }
@@ -25,6 +24,5 @@ module Rifter
     end
 
     private :normalize
-
   end
 end

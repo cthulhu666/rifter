@@ -1,6 +1,5 @@
 module Rifter
   class ShipFitting
-
     POWER_TYPES = %i(lo med hi)
 
     SCANNER_TYPE = %i(magnetometric ladar radar gravimetric)
@@ -41,7 +40,6 @@ module Rifter
       def setup
         drone.setup(self)
       end
-
     end
 
     class FittedModule < Hash
@@ -49,13 +47,13 @@ module Rifter
       include Hashie::Extensions::IndifferentAccess
       include Modifiers
 
-      # TODO to nie jest zbyt fajne, bo np. omyłkową zamiast na ShipModule wołałem #skill_required? i dostawałem false!
+      # TODO: to nie jest zbyt fajne, bo np. omyłkową zamiast na ShipModule wołałem #skill_required? i dostawałem false!
       # trzeba w #setup_module jakoś definiować atrybuty i to musi być zamknięta lista
 
       attr_reader :ship_module, :power, :id, :modifiers
       attr_writer :ship_module
 
-      # TODO make it generic and use items instead of ship_modules
+      # TODO: make it generic and use items instead of ship_modules
       alias_method :item, :ship_module
 
       def initialize(ship_module: nil, power:)
@@ -95,7 +93,6 @@ module Rifter
           self.charge = charge if item.respond_to?(:charges) && item.charge_valid?(charge)
         end
       end
-
     end
 
     def fitted_modules(klass: nil, type: nil)
@@ -136,9 +133,9 @@ module Rifter
       @fitting_errors += validate_drone_skills
 
       @fitting_errors +=
-          constraints.size - constraints.select { |c| c.evaluate(self) == 0 }.size
+          constraints.size - constraints.count { |c| c.evaluate(self) == 0 }
 
-      # TODO we dont really care about the sum, so just break on first 'breach'
+      # TODO: we dont really care about the sum, so just break on first 'breach'
 
       @fitting_errors
     end
@@ -161,7 +158,7 @@ module Rifter
 
     def validate_charges
       fitted_modules.inject(0) do |sum, fm|
-        if fm.respond_to?(:charge) and fm.ship_module.respond_to?(:charges)
+        if fm.respond_to?(:charge) && fm.ship_module.respond_to?(:charges)
           if c = fm.charge
             sum += 1 unless fm.ship_module.charge_valid?(c)
           end
@@ -173,7 +170,7 @@ module Rifter
     def max_group_fitted
       all_modules.inject(0) do |errors, mod|
         if max = mod.miscellaneous_attributes.try(:max_group_fitted)
-          errors += 1 if all_modules.select { |m| m.group == mod.group }.size > max
+          errors += 1 if all_modules.count { |m| m.group == mod.group } > max
         end
         errors
       end
@@ -183,7 +180,7 @@ module Rifter
       [0, turret_slots_left].min.abs + [0, launcher_slots_left].min.abs
     end
 
-    # TODO this isn't really necessary, because only rigs of proper size are fitted
+    # TODO: this isn't really necessary, because only rigs of proper size are fitted
     def validate_rigs
       rigs.inject(0) do |sum, r|
         sum += 1 unless r.rig_size.to_i == ship.rig_size.to_i
@@ -230,20 +227,20 @@ module Rifter
     def propulsion_mods(type = nil)
       prop_mods = fitted_modules(klass: ShipModules::PropulsionModule)
       case type
-        when nil
-          # noop
-        when :afterburner
-          prop_mods.keep_if { |p| p.ship_module.name =~ /Afterburner/ }
-        when :microwarpdrive
-          prop_mods.keep_if { |p| p.ship_module.name =~ /Microwarpdrive/ }
-        else
-          raise ArgumentError, "#{type} not allowed, allowed types are :afterburner, :microwarpdrive"
+      when nil
+      # noop
+      when :afterburner
+        prop_mods.keep_if { |p| p.ship_module.name =~ /Afterburner/ }
+      when :microwarpdrive
+        prop_mods.keep_if { |p| p.ship_module.name =~ /Microwarpdrive/ }
+      else
+        fail ArgumentError, "#{type} not allowed, allowed types are :afterburner, :microwarpdrive"
       end
       prop_mods
     end
 
     def rigs
-      # TODO refactor using fitted_modules(klass:, type:)
+      # TODO: refactor using fitted_modules(klass:, type:)
       @fitted_modules.select { |m| m.power.to_sym == :rig && m.ship_module.is_a?(Rig) }
     end
 
@@ -286,7 +283,7 @@ module Rifter
     end
 
     def drones
-      @fitted_drones.select { |d| d.drone }
+      @fitted_drones.select(&:drone)
     end
 
     def drone_slots
@@ -299,18 +296,18 @@ module Rifter
 
     def max_velocity(propulsion_module_in_use = nil)
       case propulsion_module_in_use
-        when nil
-          miscellaneous_attributes.max_velocity
-        when :afterburner
-          if ab = propulsion_mods(:afterburner).first
-            thrust = ab.speed_boost_factor
-            miscellaneous_attributes.max_velocity * (1.0 + ab.speed_factor * thrust / mass / 100.0)
-          end
-        when :microwarpdrive
-          if mwd = propulsion_mods(:microwarpdrive).first
-            thrust = mwd.speed_boost_factor
-            miscellaneous_attributes.max_velocity * (1.0 + mwd.speed_factor * thrust / mass / 100.0)
-          end
+      when nil
+        miscellaneous_attributes.max_velocity
+      when :afterburner
+        if ab = propulsion_mods(:afterburner).first
+          thrust = ab.speed_boost_factor
+          miscellaneous_attributes.max_velocity * (1.0 + ab.speed_factor * thrust / mass / 100.0)
+        end
+      when :microwarpdrive
+        if mwd = propulsion_mods(:microwarpdrive).first
+          thrust = mwd.speed_boost_factor
+          miscellaneous_attributes.max_velocity * (1.0 + mwd.speed_factor * thrust / mass / 100.0)
+        end
       end
     end
 
@@ -325,7 +322,6 @@ module Rifter
     end
 
     %i(shield armor hull).each do |s|
-
       define_method "#{s}_hp" do |damage_profile: DEFAULT_DAMAGE_PROFILE|
         damage_profile = DamageProfile.new(damage_profile) unless damage_profile.is_a?(DamageProfile)
         cap = miscellaneous_attributes["#{s}_capacity"]
@@ -336,7 +332,6 @@ module Rifter
       define_method "#{s}_resistances" do
         miscellaneous_attributes["#{s}_resonances"].inject({}) { |m, e| m[e.first] = (1 - e.last).round(3); m }
       end
-
     end
 
     def shield_recharge_rate
@@ -386,7 +381,7 @@ module Rifter
 
     def effective_hp(damage_profile: DEFAULT_DAMAGE_PROFILE)
       %i(shield_hp armor_hp hull_hp).map do |method_name|
-        send method_name, {damage_profile: damage_profile}
+        send method_name, damage_profile: damage_profile
       end.inject(:+)
     end
 
@@ -422,36 +417,36 @@ module Rifter
     # bool
 
     def has_point?
-      all_modules.any? { |m| m.group == "Warp Scrambler" }
+      all_modules.any? { |m| m.group == 'Warp Scrambler' }
     end
 
     def has_prop?
-      all_modules.any? { |m| m.group == "Propulsion Module" }
+      all_modules.any? { |m| m.group == 'Propulsion Module' }
     end
 
     def fit_module(mod, slot: nil)
       case mod
-        when String, Regexp
-          mod = ShipModule[mod]
+      when String, Regexp
+        mod = ShipModule[mod]
       end
       slot ||= mod.slot
-      if fm = fitted_modules.find { |m| m.power == slot.to_sym and m.ship_module.nil? }
+      if fm = fitted_modules.find { |m| m.power == slot.to_sym && m.ship_module.nil? }
         fm.ship_module = mod
       else
-        raise "No slots available"
+        fail 'No slots available'
       end
       fm
     end
 
     def fit_drone(drone)
       case drone
-        when String, Regexp
-          drone = Drone.find_by(name: drone)
+      when String, Regexp
+        drone = Drone.find_by(name: drone)
       end
       if slot = drone_slots.find { |s| s.drone.nil? }
         slot.drone = drone
       else
-        raise "No slots available"
+        fail 'No slots available'
       end
     end
 
@@ -461,13 +456,13 @@ module Rifter
       all.compact
     end
 
-    # TODO rename to setup_slots or sth
+    # TODO: rename to setup_slots or sth
     def empty
       ship.hi_slots.times { @fitted_modules << FittedModule.new(power: :hi) }
       ship.med_slots.times { @fitted_modules << FittedModule.new(power: :med) }
       ship.lo_slots.times { @fitted_modules << FittedModule.new(power: :lo) }
       ship.rig_slots.times { @fitted_modules << FittedModule.new(power: :rig) }
-      # TODO according to skill and modules(carriers etc)
+      # TODO: according to skill and modules(carriers etc)
       5.times { @fitted_drones << FittedDrone.new }
     end
 
@@ -496,8 +491,6 @@ module Rifter
         skill_lvl = trait.skill ? character.skill_level(trait.skill) : 1
         if t = trait.trait and t.respond_to?(:effect)
           t.effect(fitting: self, skill_lvl: skill_lvl)
-        else
-          # Rails.logger.warn("Trait not implemented: #{trait.trait}")
         end
       end
 
@@ -513,9 +506,9 @@ module Rifter
     def setup_miscellaneous_attributes
       @miscellaneous_attributes = MiscAttributes.new
 
-      all_modules.each { |m| m.freeze } # TODO not necessary
+      all_modules.each(&:freeze) # TODO: not necessary
       fitted_modules.each { |m| m.setup if m.ship_module.present? }
-      drones.each { |d| d.setup }
+      drones.each(&:setup)
 
       miscellaneous_attributes['shield_capacity'] = ship.shield_capacity
       miscellaneous_attributes['armor_capacity'] = ship.armor_hp
@@ -540,7 +533,7 @@ module Rifter
       miscellaneous_attributes['drone_bandwidth'] = ship.drone_bandwidth
       miscellaneous_attributes['drone_capacity'] = ship.drone_capacity
       miscellaneous_attributes['drone_dps'] = Damage.new
-      miscellaneous_attributes['drone_control_range'] = 20000
+      miscellaneous_attributes['drone_control_range'] = 20_000
       miscellaneous_attributes['max_active_drones'] = 0
 
       miscellaneous_attributes['max_target_range'] = ship.max_target_range
@@ -557,7 +550,7 @@ module Rifter
     end
 
     def boost_module_attribute(filter, name, value, type: :percent, stacking_penalty: false, nested_property: nil)
-      @fitted_modules.select { |e| e.item && filter.(e) }.each_with_index do |fm, i|
+      @fitted_modules.select { |e| e.item && filter.call(e) }.each_with_index do |fm, _i|
         fm.boost_attribute(name, value, type: type, stacking_penalty: stacking_penalty, nested_property: nested_property)
       end
     end
@@ -565,12 +558,12 @@ module Rifter
     # https://github.com/DarkFenX/Pyfa/blob/b2dce223b0a621678777a7bcf2a395e70b0fa6cc/eos/saveddata/fit.py#L811
     def shield_recharge(percent = PEAK_RECHARGE)
       recharge_rate = miscellaneous_attributes.shield_recharge_rate
-      10 / recharge_rate * (percent ** 0.5) * (1 - (percent ** 0.5)) * shield_capacity
+      10 / recharge_rate * (percent**0.5) * (1 - (percent**0.5)) * shield_capacity
     end
 
     def shield_tank(damage_profile: DEFAULT_DAMAGE_PROFILE)
       damage_profile = DamageProfile.new(damage_profile) unless damage_profile.is_a?(DamageProfile)
-      res = miscellaneous_attributes["shield_resonances"]
+      res = miscellaneous_attributes['shield_resonances']
       shield_recharge / damage_profile.to_a.inject(0) { |sum, e| sum += e.last * res[e.first] }
     end
 
@@ -588,11 +581,11 @@ module Rifter
 
     def cap_recharge(percent = PEAK_RECHARGE)
       recharge_rate = miscellaneous_attributes.recharge_rate
-      return 10 / recharge_rate * (percent ** 0.5) * (1 - (percent ** 0.5)) * capacitor_capacity
+      10 / recharge_rate * (percent**0.5) * (1 - (percent**0.5)) * capacitor_capacity
     end
 
     def inspect
-      "#<#{self.class} ship: #{ship.name}, mods: #{fitted_modules}, price: #{(price/10**6).round}M>"
+      "#<#{self.class} ship: #{ship.name}, mods: #{fitted_modules}, price: #{(price / 10**6).round}M>"
     end
 
     def scan_strength
@@ -605,7 +598,7 @@ module Rifter
     end
 
     def align_time
-      -Math.log(0.25) * agility * mass / 1000000.0
+      -Math.log(0.25) * agility * mass / 1_000_000.0
     end
 
     def max_target_range
@@ -614,12 +607,12 @@ module Rifter
 
     def weapon_range
       t = turrets.map { |t| t.optimal + t.falloff }
-      l = launchers.map { |l| l.range }
+      l = launchers.map(&:range)
       [t.max, l.max].compact.max.try(:round)
     end
 
     def missile_damage_projection(target: nil, group: nil)
-      raise ArgumentError, 'Target or Group required' if [target, group].compact.empty?
+      fail ArgumentError, 'Target or Group required' if [target, group].compact.empty?
       target = Ship.average_target(group) if group
       launchers.inject(Damage.new) do |dmg, l|
         dmg += l.dps.first.calculate_missile_damage(launcher: l, target: target)
@@ -628,7 +621,7 @@ module Rifter
     end
 
     def turret_damage_projection(target: nil, group: nil, distance: nil)
-      raise ArgumentError, 'Target or Group required' if [target, group].compact.empty?
+      fail ArgumentError, 'Target or Group required' if [target, group].compact.empty?
       target = Ship.average_target(group) if group
       turrets.inject(Damage.new) do |dmg, t|
         distance ||= t.optimal + t.falloff / 2
@@ -645,6 +638,5 @@ module Rifter
       # range_eq = (([0, distance - optimal].max) / falloff) ** 2
       # 0.5 ** (tracking_eq + range_eq)
     end
-
   end
 end

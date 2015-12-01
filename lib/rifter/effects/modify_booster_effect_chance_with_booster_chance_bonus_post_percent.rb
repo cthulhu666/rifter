@@ -1,8 +1,7 @@
 module Rifter
-module Effects
-  class ModifyBoosterEffectChanceWithBoosterChanceBonusPostPercent < Effect
-    # TODO generated class
+  module Effects
+    class ModifyBoosterEffectChanceWithBoosterChanceBonusPostPercent < Effect
+      # TODO: generated class
+    end
   end
-end
-
 end
