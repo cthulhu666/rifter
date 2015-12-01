@@ -16,8 +16,6 @@ module Rifter
     include RequiresSkills
     include HasEffects
 
-    # WEAPON_TYPES = ShipModule.pluck(:weapon_type).compact.uniq
-
     field :name, type: String
     field :group, type: String
     field :slot, type: String
@@ -60,7 +58,7 @@ module Rifter
     scope :weapon_type, ->(t) { where(weapon_type: t) }
 
     # this fetches all mods but excludes all weapons other than given type
-    scope :allow_weapon_type, ->(t) { where(:weapon_type.nin => WEAPON_TYPES - [t].flatten.map(&:to_s)) }
+    scope :allow_weapon_type, ->(t) { where(:weapon_type.nin => weapon_types - [t].flatten.map(&:to_s)) }
 
     scope :with_effect, ->(e) { where(:effects.in => [e]) }
     scope :without_effect, ->(e) { where(:effects.nin => [e]) }
@@ -139,6 +137,10 @@ module Rifter
 
       def copy_attributes(*attrs)
         self.attributes_to_copy = attrs
+      end
+
+      def weapon_types
+        @weapon_types ||= pluck(:weapon_type).compact.uniq
       end
     end
 
