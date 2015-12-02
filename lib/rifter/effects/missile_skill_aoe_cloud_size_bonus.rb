@@ -12,7 +12,13 @@ module Rifter
         )
       end
 
-      # TODO: skill_effect
+      def skill_effect(_attrs, fitting:, skill_lvl:)
+        fitting.boost_module_attribute(
+          -> (m) { m.item.skill_required?('Missile Launcher Operation') },
+          :aoe_cloud_size,
+          skill_lvl * miscellaneous_attributes.aoe_cloud_size_bonus
+        )
+      end
     end
   end
 end

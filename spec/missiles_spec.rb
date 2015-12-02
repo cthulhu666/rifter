@@ -42,6 +42,21 @@ RSpec.describe 'Missiles' do
     end
   end
 
+  context 'RNI with Cruise Missiles' do
+    let(:character) { Character.perfect_skills_character }
+    let(:fit) { ShipFitting.new(ship: Ship.find_by(name: 'Raven Navy Issue'), character: character) }
+
+    describe 'missile precision' do
+      let(:charge) { Charge.find_by(name: 'Inferno Precision Cruise Missile') }
+      before do
+        6.times { fit.fit_module 'Cruise Missile Launcher II' }
+        fit.launchers.each { |l| l.charge = charge }
+        fit.calculate_effects
+      end
+      it { expect(fit.launchers.first.aoe_cloud_size).to eq(167.0625) }
+    end
+  end
+
   context 'RLML fitted Caracal' do
     let :fit do
       ShipFitting.new(ship: Ship.caracal, character: character)
