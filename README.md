@@ -13,11 +13,15 @@ Only some subset of ships is supported (no T3 hulls, no capital ships, no mining
 Only some subset of effects is supported (no shield/armor reps, work in progress).
 Implants, boosters and fleet effects are not supported and I don't plan to implement them in near future.
 
+You can think of it as 'PyFa in Ruby, without a GUI'.
+
+Rifter denormalizes Eve DB dump into MongoDB database, so it can be a convenient tool if you want to browse Eve data, but don't like to perform twenty three joins to get some piece of data.
+
 ## Acknowledgments
 
 I took some code from [PyFa](https://github.com/DarkFenX/Pyfa) and translated to Ruby
-- mostly related to calculation of turrets/missiles damage.
-these fragments are marked with links to respective code pieces on PyFa github page.
+(mostly related to calculation of turrets/missiles damage).
+These fragments are marked with links to respective code pieces on PyFa github page.
 
 ## Installation
 
@@ -81,9 +85,9 @@ I use doubles sparingly and operate on real ships/modules most of the time.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/rifter.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/cthulhu666/rifter.
 I welcome all help: bugfixes, implementing new features, just remember to write specs.
+If you find this gem useful, please consider becoming a patron of my GenEFT project on [Patreon](https://www.patreon.com/geneft)
 
 ## Copyright Notice
 
