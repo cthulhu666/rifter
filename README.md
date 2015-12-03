@@ -44,9 +44,14 @@ As this gem is pretty much niche, it is not published to RubyGems.
 1. checkout repo
 2. download eve database dump from https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2 and unzip it
 3. run importer: `MONGOID_ENV=development MONGODB_URL=localhost bundle exec rake importer:run`
-4. run specs: `MONGODB_URL=localhost bundle exec rake`
+4. run console: `MONGODB_URL=localhost ./bin/console`
 
-if everything works, run console: `MONGODB_URL=localhost ./bin/console`
+Or, if using [Docker](https://www.docker.com/):
+
+3. build image: `docker-compose build app`
+4. start mongo: `docker-compose --x-networking start mongodb`
+5. run importer: `docker-compose --x-networking run app rake importer:run MONGOID_ENV=development`
+6. run console: `docker-compose --x-networking run app`
 
 Rifter console can serve as a ship/modules brower.
 Check which cruisers are fastest:
@@ -76,6 +81,14 @@ f.turrets_dps
 3. run importer: `MONGOID_ENV=test MONGODB_URL=localhost bundle exec rake importer:run`
 4. run specs: `MONGODB_URL=localhost bundle exec rake`
 5. ...
+
+Or, if using [Docker](https://www.docker.com/):
+
+3. build image: `docker-compose build app`
+4. start mongo: `docker-compose --x-networking start mongodb`
+5. run importer: `docker-compose --x-networking run app rake importer:run MONGOID_ENV=test`
+6. run specs: `docker-compose --x-networking run app rake`
+7. ...
 
 ## Word about specs
 

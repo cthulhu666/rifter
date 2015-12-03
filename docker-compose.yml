@@ -1,0 +1,16 @@
+app:
+  build: .
+  dockerfile: Dockerfile
+  volumes:
+    - .:/app
+  environment:
+    - MONGODB_HOST=rifter_mongodb_1:27017    
+
+mongodb:
+  image: dockerfile/mongodb
+  command: mongod --smallfiles
+  volumes:
+    - ./db/mongodb:/data/db
+  ports:
+    - "27017"
+
