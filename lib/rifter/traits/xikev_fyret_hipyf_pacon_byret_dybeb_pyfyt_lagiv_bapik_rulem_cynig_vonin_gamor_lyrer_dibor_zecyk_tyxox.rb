@@ -1,9 +1,12 @@
 module Rifter
   module Traits
     class XikevFyretHipyfPaconByretDybebPyfytLagivBapikRulemCynigVoninGamorLyrerDiborZecykTyxox < Trait
-      # TODO: generated class
       # used in 2 ships
-      # bonusText: "bonus to ship armor hitpoints"
+      description 'bonus to ship armor hitpoints'
+
+      def effect(fitting:, skill_lvl:)
+        fitting.boost_attribute(:armor_capacity, skill_lvl * bonus)
+      end
     end
   end
 end
