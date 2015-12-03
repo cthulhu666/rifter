@@ -48,6 +48,7 @@ As this gem is pretty much niche, it is not published to RubyGems.
 
 Or, if using [Docker](https://www.docker.com/):
 
+1. Points 1 & 2 same as above
 3. build image: `docker-compose build app`
 4. start mongo: `docker-compose --x-networking start mongodb`
 5. run importer: `docker-compose --x-networking run app rake importer:run MONGOID_ENV=development`
@@ -84,6 +85,7 @@ f.turrets_dps
 
 Or, if using [Docker](https://www.docker.com/):
 
+1. Points 1 & 2 same as above
 3. build image: `docker-compose build app`
 4. start mongo: `docker-compose --x-networking start mongodb`
 5. run importer: `docker-compose --x-networking run app rake importer:run MONGOID_ENV=test`
