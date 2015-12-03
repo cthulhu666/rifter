@@ -38,6 +38,14 @@ RSpec.describe 'Armor' do
         it { expect(fit.armor_resistances).to eq(em: 0.6, thermal: 0.48, kinetic: 0.48, explosive: 0.28) }
       end
 
+      context 'With Armor Hardener' do
+        let(:fit) do
+          astero.fit_module 'Armor Kinetic Hardener II'
+          astero
+        end
+        it { expect(fit.armor_resistances).to eq(em: 0.6, thermal: 0.48, kinetic: 0.766, explosive: 0.28) }
+      end
+
       context 'With Energized Adaptive Nano Membrane II' do
         let(:fit) do
           astero.fit_module 'Energized Adaptive Nano Membrane II'
