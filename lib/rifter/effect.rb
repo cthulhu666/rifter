@@ -40,16 +40,5 @@ module Rifter
     def to_s
       "#<#{self.class}>"
     end
-
-    def stacking_penalty(value, context, key = "#{self.class}", &_block)
-      n = context["stacking:#{key}"] ||= 0
-      adjusted_value = value * ShipModule::STACKING_PENALTY[n]
-      # puts "Adjusted value: #{value} to #{adjusted_value} due to stacking penalty"
-      yield adjusted_value
-      context["stacking:#{key}"] += 1
-    end
-
-    # TODO: moved to ShipFitting
-    # deprecate :stacking_penalty
   end
 end
