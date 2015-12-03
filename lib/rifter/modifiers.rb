@@ -1,5 +1,7 @@
 module Rifter
   module Modifiers
+    STACKING_PENALTY = (0..10).map { |i| Math::E**(-(i / 2.67)**2) }
+
     def apply_modifiers(context = self)
       evaluate_lambdas(modifiers)
       the_modifiers = percentages_to_multipliers(modifiers)
@@ -25,7 +27,7 @@ module Rifter
           a.each_with_index do |m, i|
             original_val = get_value(context, attr)
             modifier = original_val * m[1] - original_val
-            set_value(context, attr, original_val + modifier * ShipModule::STACKING_PENALTY[i])
+            set_value(context, attr, original_val + modifier * STACKING_PENALTY[i])
           end
         end
       end

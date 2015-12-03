@@ -4,8 +4,6 @@ module Rifter
 
     DAMAGE_TYPES = Damage::DAMAGE_TYPES # for backward compatibility
 
-    STACKING_PENALTY = (0..7).map { |i| Math::E**(-(i / 2.67)**2) } # TODO: remove
-
     cattr_accessor :attributes_to_copy
 
     include Mongoid::Document
@@ -79,10 +77,6 @@ module Rifter
 
       def random
         skip(rand(count)).first
-      end
-
-      def calculate_stacking_penalty(attr_value, num)
-        attr_value * STACKING_PENALTY[num]
       end
 
       def relevant_effects

@@ -107,15 +107,16 @@ RSpec.describe 'Missiles' do
         2.times { fit.fit_module(ShipModule['Rapid Light Missile Launcher II']) }
         2.times { fit.fit_module(ShipModule['Ballistic Control System II']) }
         2.times { fit.fit_module(ShipModule['Missile Guidance Enhancer II']) }
+        2.times { fit.fit_module(ShipModule['Medium Warhead Calefaction Catalyst I']) }
         fit.launchers.each { |l| l.charge = charge }
         fit.calculate_effects
       end
 
       describe 'Missile alpha and dps' do
         context 'with no skills' do
-          it { expect(fit.missile_alpha.sum).to be_within(0.1).of(277.4) }
-          it { expect(fit.missile_dps.first.sum).to be_within(0.1).of(54.7) }
-          it { expect(fit.missile_dps.last.sum).to be_within(0.1).of(40.6) }
+          it { expect(fit.missile_alpha.sum).to be_within(0.1).of(301.5) }
+          it { expect(fit.missile_dps.first.sum).to be_within(0.1).of(59.4) }
+          it { expect(fit.missile_dps.last.sum).to be_within(0.1).of(44.2) }
           it { expect(fit.launchers.first.range).to be_within(0.1).of(17_491.5) }
         end
 
@@ -124,9 +125,9 @@ RSpec.describe 'Missiles' do
             Character.perfect_skills_character
           end
 
-          it { expect(fit.missile_alpha.sum).to be_within(0.1).of(381.4) }
-          it { expect(fit.missile_dps.first.sum).to be_within(0.1).of(145.5) }
-          it { expect(fit.missile_dps.last.sum).to be_within(0.1).of(87.2) } # TODO: check with EFT
+          it { expect(fit.missile_alpha.sum).to be_within(0.1).of(414.6) }
+          it { expect(fit.missile_dps.first.sum).to be_within(0.1).of(158.2) }
+          it { expect(fit.missile_dps.last.sum).to be_within(0.1).of(94.85) }
           it { expect(fit.launchers.first.range).to be_within(0.1).of(59_033.8) }
         end
       end

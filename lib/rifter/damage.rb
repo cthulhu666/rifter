@@ -21,6 +21,10 @@ module Rifter
       Damage.new(@value.map { |k, v| [k, v + damage[k]] })
     end
 
+    def -(damage)
+      Damage.new(@value.map { |k, v| [k, v - damage[k]] })
+    end
+
     def [](dmg_type)
       @value[dmg_type.to_sym]
     end
