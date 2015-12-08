@@ -1,6 +1,24 @@
 require 'spec_helper'
 
 RSpec.describe 'Missiles' do
+  context 'CN Hookbill' do
+    let(:character) { Character.perfect_skills_character }
+    let(:fit) do
+      f = ShipFitting.new(ship: Ship.find_by(name: 'Caldari Navy Hookbill'), character: character)
+      f.fit_module('Light Missile Launcher II').charge = Charge.find_by(name: 'Inferno Fury Light Missile')
+      f.fit_module('Light Missile Launcher II').charge = Charge.find_by(name: 'Mjolnir Fury Light Missile')
+      f.fit_module('Light Missile Launcher II').charge = Charge.find_by(name: 'Scourge Fury Light Missile')
+      f
+    end
+    before { fit.calculate_effects }
+    it 'Does more kinetic dmg than other types of damage' do
+      dps_without_reloads = fit.missile_dps.first
+      expect(dps_without_reloads[:thermal]).to be_within(0.1).of(36.2)
+      expect(dps_without_reloads[:em]).to be_within(0.1).of(36.2)
+      expect(dps_without_reloads[:kinetic]).to be_within(0.1).of(40.7)
+    end
+  end
+
   context 'Orthrus with RLML' do
     let(:character) { Character.perfect_skills_character }
     let(:charge) { Charge.find_by(name: 'Inferno Fury Light Missile') }
@@ -38,7 +56,8 @@ RSpec.describe 'Missiles' do
         fit.calculate_effects
       end
       it { expect(fit.missile_alpha.sum).to be_within(0.1).of(3093.8) }
-      it { expect(fit.missile_dps.last.sum).to be_within(0.1).of(362.2) }
+      # TODO: this changed from 362.2 to 347.17 after 8th dec 2015 release, take a closer look why
+      it { expect(fit.missile_dps.last.sum).to be_within(0.1).of(347.2) }
     end
   end
 

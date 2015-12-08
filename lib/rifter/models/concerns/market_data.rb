@@ -1,4 +1,6 @@
 require 'open-uri'
+require 'nokogiri'
+require 'ruby-progressbar'
 
 module Rifter
   module MarketData
@@ -12,9 +14,18 @@ module Rifter
         progressbar = ProgressBar.create
         progressbar.total = query.count
         query.each_slice(batch_size) do |slice|
-          ids = slice.map(&:type_id).join ','
-          doc = Nokogiri::HTML(open("http://api.eve-central.com/api/marketstat?typeid=#{ids}"))
-          slice.each { |item| item.update_market_data(doc) }
+          begin
+            ids = slice.map(&:type_id).join ','
+            doc = Nokogiri::HTML(open("http://api.eve-central.com/api/marketstat?typeid=#{ids}"))
+            slice.each { |item| item.update_market_data(doc) }
+          rescue OpenURI::HTTPError => e
+            case e.io.status.first
+            when '400'
+              slice.each(&:fetch_market_data)
+            else
+              raise e
+            end
+          end
           progressbar.progress += slice.size
         end
       end
@@ -23,6 +34,8 @@ module Rifter
     def fetch_market_data
       doc = Nokogiri::HTML(open("http://api.eve-central.com/api/marketstat?typeid=#{type_id}"))
       update_market_data(doc)
+    rescue OpenURI::HTTPError => e
+      puts "Error when fetching market data for item: #{self}"
     end
 
     def update_market_data(doc)
