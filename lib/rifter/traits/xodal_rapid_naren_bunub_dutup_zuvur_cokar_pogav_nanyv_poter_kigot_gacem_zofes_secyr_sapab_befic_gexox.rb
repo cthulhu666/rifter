@@ -1,7 +1,6 @@
 module Rifter
   module Traits
     class XodalRapidNarenBunubDutupZuvurCokarPogavNanyvPoterKigotGacemZofesSecyrSapabBeficGexox < Trait
-
       description 'bonus to <a href=showinfo:3320>Rocket</a> explosion velocity'
 
       def effect(fitting:, skill_lvl:)

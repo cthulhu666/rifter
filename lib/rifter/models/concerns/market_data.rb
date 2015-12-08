@@ -20,10 +20,10 @@ module Rifter
             slice.each { |item| item.update_market_data(doc) }
           rescue OpenURI::HTTPError => e
             case e.io.status.first
-              when '400'
-                slice.each { |m| m.fetch_market_data }
-              else
-                raise e
+            when '400'
+              slice.each(&:fetch_market_data)
+            else
+              raise e
             end
           end
           progressbar.progress += slice.size

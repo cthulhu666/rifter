@@ -1,7 +1,6 @@
 module Rifter
   module Traits
     class XiralCezivMikadLisobLekukVirezBazivFonohVibasSyfonGezocFenenBilucVygynHipemCefahHuxex < Trait
-
       description 'bonus to EM, kinetic, thermal <a href=showinfo:3320>Rocket</a> damage'
 
       def effect(fitting:, skill_lvl:)
@@ -9,7 +8,7 @@ module Rifter
         fitting.boost_module_attribute(
           -> (m) { m.item.group == 'Missile Launcher Rocket' },
           :alpha_dmg,
-          {em: multiplier, thermal: multiplier, kinetic: multiplier},
+          { em: multiplier, thermal: multiplier, kinetic: multiplier },
           type: :multiplier
         )
       end
