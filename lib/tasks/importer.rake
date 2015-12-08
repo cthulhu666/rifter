@@ -6,7 +6,7 @@ include Rifter
 namespace :importer do
   task :run do
     if defined?(Rails)
-      Rake::Task["environment"].invoke
+      Rake::Task['environment'].invoke
     else
       Mongoid.load!('mongoid.yml')
     end
@@ -19,4 +19,3 @@ namespace :importer do
     Drone.classify_drones
   end
 end
-
