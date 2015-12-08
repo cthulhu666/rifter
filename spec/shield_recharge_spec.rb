@@ -29,6 +29,6 @@ RSpec.describe 'Shield recharge' do
     before { fit.calculate_effects }
 
     it { expect(fit.shield_capacity.round).to eq(14_844) }
-    it { expect(fit.shield_tank(damage_profile: ShipFitting::DEFAULT_DAMAGE_PROFILE)).to be_within(0.1).of(62.2) }
+    it { expect(fit.shield_tank(damage_profile: ShipFitting::DEFAULT_DAMAGE_PROFILE)).to be_within(0.1).of(64.7) }
   end
 end
