@@ -4,8 +4,6 @@ module Rifter
 
     DAMAGE_TYPES = Damage::DAMAGE_TYPES # for backward compatibility
 
-    cattr_accessor :attributes_to_copy
-
     include Mongoid::Document
     include Mongoid::Attributes::Dynamic # TODO: remove?
     store_in collection: 'ship_modules'
@@ -130,8 +128,10 @@ module Rifter
       end
 
       def copy_attributes(*attrs)
-        self.attributes_to_copy = attrs
+        @attributes_to_copy = attrs
       end
+
+      attr_reader :attributes_to_copy
 
       def weapon_types
         @weapon_types ||= pluck(:weapon_type).compact.uniq
@@ -182,9 +182,10 @@ module Rifter
     end
 
     def setup(fitted_module)
-      attributes_to_copy.each do |s|
+      atc = self.class.attributes_to_copy
+      atc.each do |s|
         fitted_module[s] = miscellaneous_attributes[s]
-      end unless attributes_to_copy.nil?
+      end unless atc.nil?
     end
   end
 end
