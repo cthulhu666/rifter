@@ -163,12 +163,25 @@ RSpec.describe 'Missiles' do
     end
 
     let(:charge) { Charge.find_by(name: 'Scourge Rage Rocket') }
+    let(:script) { Charge.find_by(name: 'Missile Range Script') }
 
     before do
       4.times { fit.fit_module(ShipModule['Rocket Launcher II']) }
       fit.launchers.each { |l| l.charge = charge }
-      fit.fit_module 'Missile Guidance Computer II' # TODO: check range and stuff
+      fit.fit_module('Missile Guidance Computer II').charge = script
       fit.calculate_effects
+    end
+
+    describe 'missile range script' do
+      let(:computer) { fit.fitted_modules(klass: ShipModules::MissileGuidanceComputer).first }
+      it 'doubles range bonuses' do
+        expect(computer.missile_velocity_bonus).to eq(11)
+        expect(computer.explosion_delay_bonus).to eq(11)
+      end
+      it 'negates aoe bonuses' do
+        expect(computer.aoe_cloud_size_bonus).to eq(0)
+        expect(computer.aoe_velocity_bonus).to eq(0)
+      end
     end
 
     describe 'missile alpha and dps' do
@@ -186,11 +199,9 @@ RSpec.describe 'Missiles' do
           end
         end
 
-        it do
-          expect(fit.missile_alpha.sum.to_i).to eq(245)
-        end
-        # TODO: it { expect(fit.missile_dps.first.sum.to_i).to eq(111) }
-        # TODO it { expect(fit.missile_dps.last.sum.to_i).to eq(39) }
+        it { expect(fit.missile_alpha.sum.to_i).to eq(245) }
+        it { expect(fit.missile_dps.first.sum.to_i).to eq(61) }
+        it { expect(fit.missile_dps.last.sum.to_i).to eq(58) }
       end
 
       context 'with perfect skills' do
@@ -198,12 +209,9 @@ RSpec.describe 'Missiles' do
           Character.perfect_skills_character
         end
 
-        it do
-          expect(fit.missile_alpha.sum.to_i).to eq(306)
-        end
-
-        # TODO: it { expect(fit.missile_dps.first.sum.to_i).to eq(111) }
-        # TODO it { expect(fit.missile_dps.last.sum.to_i).to eq(39) }
+        it { expect(fit.missile_alpha.sum.to_i).to eq(306) }
+        it { expect(fit.missile_dps.first.sum.to_i).to eq(111) }
+        it { expect(fit.missile_dps.last.sum.to_i).to eq(103) }
       end
     end
   end
