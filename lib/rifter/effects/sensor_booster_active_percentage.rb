@@ -4,11 +4,14 @@ module Rifter
       description 'Sensor Booster modules'
 
       def effect(_attrs, fitting:, fitted_module:)
-        fitting.boost_attribute(
-          :max_target_range,
-          miscellaneous_attributes.max_target_range_bonus,
-          stacking_penalty: true
-        )
+        # TODO: scan resolution
+        [%i(max_target_range max_target_range_bonus)].each do |k, v|
+          fitting.boost_attribute(
+            k,
+            fitted_module[v],
+            stacking_penalty: true
+          )
+        end
       end
     end
   end
