@@ -8,7 +8,7 @@ module Rifter
         fitting.boost_module_attribute(
           -> (m) { m.is_a?(ShipModule::Turret) },
           :damage_multiplier,
-          :skill_lvl * bonus
+          skill_lvl * bonus
         )
       end
     end
