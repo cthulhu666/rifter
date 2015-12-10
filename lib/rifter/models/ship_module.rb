@@ -135,7 +135,7 @@ module Rifter
       attr_reader :attributes_to_copy
 
       def weapon_types
-        @weapon_types ||= pluck(:weapon_type).compact.uniq
+        @weapon_types ||= distinct(:weapon_type).compact
       end
     end
 

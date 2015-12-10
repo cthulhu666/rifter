@@ -4,7 +4,7 @@ module Rifter
     using Refinements
 
     WEAPON_TYPES = %w(pulse beam autocannon artillery blaster railgun)
-    # result of `ShipModule.where(:charge_size.exists => true).pluck(:weapon_type).uniq`
+    # result of `ShipModule.where(:charge_size.exists => true).distinct(:weapon_type)`
 
     included do
       field :weapon_type, type: String
