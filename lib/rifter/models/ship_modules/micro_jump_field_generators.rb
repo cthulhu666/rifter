@@ -1,6 +1,6 @@
 module Rifter
   module ShipModules
-    class MicroJumpFieldGenerators
+    class MicroJumpFieldGenerators < ShipModule
     end
   end
 end
