@@ -122,8 +122,9 @@ module Rifter
       end
 
       def fix_types
-        where(_type: 'ShipModule').each do |m|
-          m.update_attribute(:_type, "ShipModules::#{m.group.delete(' ')}")
+        where(_type: ShipModule.name).each do |m|
+          klass = ShipModules.const_get(m.group.delete(' '))
+          m.update_attribute(:_type, klass.name) unless klass.nil?
         end
       end
 
