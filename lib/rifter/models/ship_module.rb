@@ -175,13 +175,6 @@ module Rifter
       "#<#{self.class}: #{name}>"
     end
 
-    def increase_meta_level(filter: -> (q) { q })
-      q = self.class.meta_level(meta_level..1.0 / 0.0)
-      q = q.weapon_type(weapon_type) if fields['weapon_type'].present?
-      q = filter.call(q)
-      q.random
-    end
-
     def setup(fitted_module)
       atc = self.class.attributes_to_copy
       atc.each do |s|

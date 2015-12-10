@@ -45,24 +45,4 @@ RSpec.describe ShipModule do
       it { expect(mod.skill_required?(skill)).to be(false) }
     end
   end
-
-  describe '#increase_meta_level' do
-    %i(autocannon artillery).each do |weapon_type|
-      context "Weapon type: #{weapon_type}" do
-        let(:mod) { ShipModule.weapon_type(weapon_type).random }
-        let(:better) { mod.increase_meta_level }
-
-        it { expect(better.weapon_type).to eq(mod.weapon_type) }
-        it { expect(better.meta_level).to be >= mod.meta_level }
-      end
-    end
-
-    context 'Shield Extender' do
-      let(:mod) { ShipModules::ShieldExtender.random }
-      let(:better) { mod.increase_meta_level }
-
-      it { expect(better).to be_a(ShipModules::ShieldExtender) }
-      it { expect(better.meta_level).to be >= mod.meta_level }
-    end
-  end
 end
