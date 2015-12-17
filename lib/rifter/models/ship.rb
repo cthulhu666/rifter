@@ -5,12 +5,6 @@ module Rifter
     include Mongoid::Document
     store_in collection: 'ships'
 
-    ENABLED_GROUPS = [
-      'Rookie ship', 'Frigate', 'Assault Frigate', 'Destroyer',
-      'Cruiser', 'Attack Battlecruiser', 'Combat Battlecruiser', 'Command Ship',
-      'Force Recon Ship', 'Heavy Assault Cruiser', 'Heavy Interdiction Cruiser',
-      'Battleship']
-
     FRIGATE_HULL = [/frigate/i, /destroyer/i, 'Interceptor', 'Electronic Attack Ship', 'Stealth Bomber', 'Rookie ship']
     CRUISER_HULL = [/cruiser/i, 'Combat Recon Ship', 'Command Ship', 'Force Recon Ship']
 
@@ -105,40 +99,40 @@ module Rifter
 
     before_save do
       self.power_output = begin
-                            miscellaneous_attributes.power_output.to_f
-                          rescue
-                            0
-                          end
+        miscellaneous_attributes.power_output.to_f
+      rescue
+        0
+      end
       self.cpu_output = begin
-                          miscellaneous_attributes.cpu_output.to_f
-                        rescue
-                          0
-                        end
+        miscellaneous_attributes.cpu_output.to_f
+      rescue
+        0
+      end
       self.lo_slots = begin
-                        miscellaneous_attributes.low_slots.to_i
-                      rescue
-                        0
-                      end
+        miscellaneous_attributes.low_slots.to_i
+      rescue
+        0
+      end
       self.med_slots = begin
-                         miscellaneous_attributes.med_slots.to_i
-                       rescue
-                         0
-                       end
+        miscellaneous_attributes.med_slots.to_i
+      rescue
+        0
+      end
       self.hi_slots = begin
-                        miscellaneous_attributes.hi_slots.to_i
-                      rescue
-                        0
-                      end
+        miscellaneous_attributes.hi_slots.to_i
+      rescue
+        0
+      end
       self.rig_slots = begin
-                         miscellaneous_attributes.rig_slots.to_i
-                       rescue
-                         0
-                       end
+        miscellaneous_attributes.rig_slots.to_i
+      rescue
+        0
+      end
       self.rig_size = begin
-                        miscellaneous_attributes.rig_size.to_i
-                      rescue
-                        nil
-                      end
+        miscellaneous_attributes.rig_size.to_i
+      rescue
+        nil
+      end
     end
 
     class << self
@@ -174,16 +168,11 @@ module Rifter
     end
 
     def turret_slots
-      miscellaneous_attributes.turret_slots_left.to_i
+      miscellaneous_attributes['turret_slots_left'].try(:to_i) || 0
     end
 
     def launcher_slots
-      # Naga doesn't have this attribute... maybe instead of checking this it's better to create this attribute in Importer
-      if s = miscellaneous_attributes['launcher_slots_left']
-        s.to_i
-      else
-        0
-      end
+      miscellaneous_attributes['launcher_slots_left'].try(:to_i) || 0
     end
 
     def shield_recharge_rate
