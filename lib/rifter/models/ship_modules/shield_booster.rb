@@ -1,7 +1,7 @@
 module Rifter
   module ShipModules
     class ShieldBooster < ShipModule
-      # TODO: generated class
+      copy_attributes :capacitor_need
     end
   end
 end
