@@ -5,6 +5,9 @@ module Rifter
     include Mongoid::Document
     store_in collection: 'ships'
 
+    include MarketData
+    include RequiresSkills
+
     FRIGATE_HULL = [/frigate/i, /destroyer/i, 'Interceptor', 'Electronic Attack Ship', 'Stealth Bomber', 'Rookie ship']
     CRUISER_HULL = [/cruiser/i, 'Combat Recon Ship', 'Command Ship', 'Force Recon Ship']
 

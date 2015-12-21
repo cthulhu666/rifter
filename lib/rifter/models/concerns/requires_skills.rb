@@ -10,7 +10,7 @@ module Rifter
           mod.required_skills.clear
           # TODO: ShipModule has all attributes directly in miscellaneous_attributes; make it as in Drone
           req_skills = case mod
-                       when ShipModule
+                       when ShipModule, Ship
                          mod.miscellaneous_attributes.attributes
                        when Drone
                          mod.miscellaneous_attributes.required_skills
