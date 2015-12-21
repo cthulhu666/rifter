@@ -74,21 +74,18 @@ module Rifter
       end
 
       def bind_to_launchers
-        each do |charge|
-          next unless charge.launcher_group
-          q = ShipModule.where(group_id: charge.launcher_group)
-          q = q.where(charge_size: charge.charge_size.to_i) if charge.charge_size
-          q = q.tech_level(2) if charge.tech_level == 2
-          q.each { |l| l.charges << charge if l.respond_to?(:charges) }
-        end
-        # missiles need some special treatment
-        ShipModule.where(effects: { '$in' => ['useMissiles'] }).each do |mod|
+        ShipModule.where('miscellaneous_attributes.charge_group1' => { :$exists => true }).each do |mod|
           groups = mod.miscellaneous_attributes.attributes
                    .select { |k, _v| k =~ /^charge_group/ }.inject([]) do |arr, e|
             arr << e.last
             arr
           end
-          mod.charges << Charge.where(group_id: { '$in' => groups })
+          next unless mod.respond_to?(:charges)
+          q = Charge.where(group_id: { '$in' => groups })
+          if size = mod.try(:charge_size)
+            q = q.where(charge_size: size)
+          end
+          mod.charges = q
         end
       end
     end
