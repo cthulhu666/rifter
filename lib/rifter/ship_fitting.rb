@@ -352,13 +352,9 @@ module Rifter
     end
 
     def effective_shield_boost(damage_profile: DEFAULT_DAMAGE_PROFILE)
-      sum = damage_profile.inject(0) { |sum, e| sum += e.last; sum }
-      shield_resistances.inject(0) do |hp, res|
-        boost_with_resistance = shield_boost.to_f * (1 + res.last)
-        contribution = (damage_profile[res.first] || 0).to_f / sum
-        hp += boost_with_resistance * contribution
-        hp
-      end
+      damage_profile = DamageProfile.new(damage_profile) unless damage_profile.is_a?(DamageProfile)
+      res = miscellaneous_attributes.shield_resonances
+      shield_boost / damage_profile.to_a.inject(0) { |sum, e| sum += e.last * res[e.first] }
     end
 
     # END shields
