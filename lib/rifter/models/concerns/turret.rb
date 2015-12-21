@@ -33,6 +33,7 @@ module Rifter
     end
 
     def setup(fitted_module)
+      super
       %i(speed falloff damage_multiplier tracking_speed optimal_sig_radius).each do |s|
         fitted_module[s] = miscellaneous_attributes[s]
       end
@@ -70,6 +71,10 @@ module Rifter
             (optimal_sig_radius / target.signature_radius))**2)
         range_eq = (([0, distance - optimal].max) / falloff)**2
         0.5**(tracking_eq + range_eq)
+      end
+
+      def cap_usage
+        capacitor_need * rof
       end
     end
   end

@@ -8,7 +8,7 @@ module Rifter
           :shield_capacity,
           miscellaneous_attributes.shield_capacity_multiplier,
           type: :multiplier
-        )
+        ) if miscellaneous_attributes.respond_to?(:shield_capacity_multiplier)
       end
     end
   end

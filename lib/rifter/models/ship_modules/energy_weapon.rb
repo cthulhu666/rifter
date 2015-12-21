@@ -3,6 +3,8 @@ module Rifter
     class EnergyWeapon < ShipModule
       include Turret
 
+      copy_attributes :capacitor_need
+
       def infer_weapon_type
         # TODO
         case name
