@@ -270,10 +270,6 @@ module Rifter
       miscellaneous_attributes.power_output
     end
 
-    def drone_bandwidth
-      miscellaneous_attributes.drone_bandwidth
-    end
-
     def drone_bandwidth_usage
       miscellaneous_attributes.drone_bandwidth_usage
     end
