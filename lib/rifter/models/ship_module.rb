@@ -29,6 +29,10 @@ module Rifter
     field :type_id
     # groupID in db dump
     field :group_id
+    # parentTypeID in invMetaTypes table
+    field :parent_type_id, type: Integer
+    # :metaGroupID in invMetaTypes table
+    field :meta_group_id, type: Integer
 
     field :effects, type: Array, default: []
 
@@ -60,6 +64,7 @@ module Rifter
     scope :without_effect, ->(e) { where(:effects.nin => [e]) }
 
     embeds_one :miscellaneous_attributes, class_name: 'Rifter::MiscellaneousAttributes'
+    has_and_belongs_to_many :variations, class_name: 'Rifter::ShipModule'
 
     # indices
     index({ slot: 1 }, unique: false)
@@ -113,12 +118,23 @@ module Rifter
         end
       end
 
+      def setup_variations
+        ShipModule.where(parent_type_id: nil).each do |m|
+          m.variations = ShipModule.where(parent_type_id: m.type_id)
+          m.variations.each do |v|
+            v.variation_ids = m.variations.map(&:id) + [m.id] - [v.id]
+            v.save!
+          end
+        end
+      end
+
       def setup_ship_modules
         mark_relevant_modules
         setup_weapons
         assign_required_skills
         mark_faction_modules
         mark_deadspace_modules
+        setup_variations
       end
 
       def fix_types

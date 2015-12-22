@@ -27,7 +27,10 @@ module Rifter
     end
 
     def items(group_id)
-      db[:invTypes].where(groupID: group_id)
+      db[:invTypes]
+        .left_join(:invMetaTypes, typeID: :typeID)
+        .where(groupID: group_id)
+        .select { [`invTypes.*`, `invMetaTypes.parentTypeID`, `invMetaTypes.metaGroupID`] }
     end
 
     def determine_slot(type_id)
@@ -150,6 +153,8 @@ module Rifter
             slot: determine_slot(item[:typeID]),
             type_id: item[:typeID],
             group_id: item[:groupID],
+            parent_type_id: item[:parentTypeID],
+            meta_group_id: item[:metaGroupID],
             effects: effects(item[:typeID]),
             mass: item[:mass],
             volume: item[:volume],
