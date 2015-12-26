@@ -93,10 +93,11 @@ module Rifter
       end
 
       def setup_weapons
-        each do |mod|
-          if mod.fields['weapon_type'].present?
-            mod.update_attribute :weapon_type, mod.infer_weapon_type
-          end
+        where(parent_type_id: nil).each do |mod|
+          next unless mod.fields['weapon_type'].present?
+          t = mod.infer_weapon_type
+          mod.update_attribute :weapon_type, t
+          mod.variations.each { |m| m.update_attribute :weapon_type, t }
         end
       end
 
@@ -130,11 +131,11 @@ module Rifter
 
       def setup_ship_modules
         mark_relevant_modules
-        setup_weapons
         assign_required_skills
         mark_faction_modules
         mark_deadspace_modules
         setup_variations
+        setup_weapons
       end
 
       def fix_types
