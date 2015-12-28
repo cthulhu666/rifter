@@ -11,8 +11,6 @@ module Rifter
           'beam'
         when /pulse/i
           'pulse'
-        else
-          nil
         end
       end
     end
