@@ -4,8 +4,6 @@ module Rifter
 
     DAMAGE_TYPES = Damage::DAMAGE_TYPES # for backward compatibility
 
-    cattr_accessor :attributes_to_copy
-
     include Mongoid::Document
     include Mongoid::Attributes::Dynamic # TODO: remove?
     store_in collection: 'ship_modules'
@@ -31,6 +29,10 @@ module Rifter
     field :type_id
     # groupID in db dump
     field :group_id
+    # parentTypeID in invMetaTypes table
+    field :parent_type_id, type: Integer
+    # :metaGroupID in invMetaTypes table
+    field :meta_group_id, type: Integer
 
     field :effects, type: Array, default: []
 
@@ -62,6 +64,7 @@ module Rifter
     scope :without_effect, ->(e) { where(:effects.nin => [e]) }
 
     embeds_one :miscellaneous_attributes, class_name: 'Rifter::MiscellaneousAttributes'
+    has_and_belongs_to_many :variations, class_name: 'Rifter::ShipModule'
 
     # indices
     index({ slot: 1 }, unique: false)
@@ -90,10 +93,11 @@ module Rifter
       end
 
       def setup_weapons
-        each do |mod|
-          if mod.fields['weapon_type'].present?
-            mod.update_attribute :weapon_type, mod.infer_weapon_type
-          end
+        where(parent_type_id: nil).each do |mod|
+          next unless mod.fields['weapon_type'].present?
+          t = mod.infer_weapon_type
+          mod.update_attribute :weapon_type, t
+          mod.variations.each { |m| m.update_attribute :weapon_type, t }
         end
       end
 
@@ -115,26 +119,40 @@ module Rifter
         end
       end
 
+      def setup_variations
+        ShipModule.where(parent_type_id: nil).each do |m|
+          m.variations = ShipModule.where(parent_type_id: m.type_id)
+          m.variations.each do |v|
+            v.variation_ids = m.variations.map(&:id) + [m.id] - [v.id]
+            v.save!
+          end
+        end
+      end
+
       def setup_ship_modules
         mark_relevant_modules
-        setup_weapons
         assign_required_skills
         mark_faction_modules
         mark_deadspace_modules
+        setup_variations
+        setup_weapons
       end
 
       def fix_types
-        where(_type: 'ShipModule').each do |m|
-          m.update_attribute(:_type, "ShipModules::#{m.group.delete(' ')}")
+        where(_type: ShipModule.name).each do |m|
+          klass = ShipModules.const_get(m.group.delete(' '))
+          m.update_attribute(:_type, klass.name) unless klass.nil?
         end
       end
 
       def copy_attributes(*attrs)
-        self.attributes_to_copy = attrs
+        @attributes_to_copy = attrs
       end
 
+      attr_reader :attributes_to_copy
+
       def weapon_types
-        @weapon_types ||= pluck(:weapon_type).compact.uniq
+        @weapon_types ||= distinct(:weapon_type).compact
       end
     end
 
@@ -174,17 +192,11 @@ module Rifter
       "#<#{self.class}: #{name}>"
     end
 
-    def increase_meta_level(filter: -> (q) { q })
-      q = self.class.meta_level(meta_level..1.0 / 0.0)
-      q = q.weapon_type(weapon_type) if fields['weapon_type'].present?
-      q = filter.call(q)
-      q.random
-    end
-
     def setup(fitted_module)
-      attributes_to_copy.each do |s|
+      atc = self.class.attributes_to_copy
+      atc.each do |s|
         fitted_module[s] = miscellaneous_attributes[s]
-      end unless attributes_to_copy.nil?
+      end unless atc.nil?
     end
   end
 end

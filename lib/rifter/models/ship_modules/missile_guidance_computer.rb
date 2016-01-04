@@ -3,11 +3,8 @@ module Rifter
     class MissileGuidanceComputer < ShipModule
       include HasCharges
 
-      def setup(fitted_module)
-        %i(explosion_delay_bonus missile_velocity_bonus).each do |s|
-          fitted_module[s] = miscellaneous_attributes[s]
-        end
-      end
+      copy_attributes :explosion_delay_bonus, :missile_velocity_bonus,
+                      :aoe_velocity_bonus, :aoe_cloud_size_bonus
     end
   end
 end

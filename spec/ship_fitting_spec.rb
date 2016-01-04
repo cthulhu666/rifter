@@ -183,7 +183,12 @@ RSpec.describe ShipFitting do
     end
   end
 
-  Ship.group(Ship::ENABLED_GROUPS).each do |ship|
+  ENABLED_GROUPS = [
+    'Rookie ship', 'Frigate', 'Assault Frigate', 'Destroyer',
+    'Cruiser', 'Attack Battlecruiser', 'Combat Battlecruiser', 'Command Ship',
+    'Force Recon Ship', 'Heavy Assault Cruiser', 'Heavy Interdiction Cruiser',
+    'Battleship', 'Command Destroyers', 'Combat Recon Ship']
+  Ship.group(ENABLED_GROUPS).each do |ship|
     describe ship.name do
       let(:fit) { ShipFitting.new(ship: ship, character: Character.perfect_skills_character) }
 

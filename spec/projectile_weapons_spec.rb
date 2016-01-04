@@ -1,6 +1,27 @@
 require 'spec_helper'
 
 RSpec.describe 'Projectile weapons' do
+  context 'Gnosis' do
+    let :fit do
+      ShipFitting.new(ship: Ship.find_by(name: 'Gnosis'), character: character)
+    end
+
+    let :character do
+      Character.perfect_skills_character
+    end
+
+    let :charge do
+      Charge.find_by(name: 'Hail M')
+    end
+
+    before do
+      5.times { fit.fit_module 'Dual 180mm AutoCannon II' }
+      fit.turrets.each { |t| t.charge = charge }
+      fit.calculate_effects
+    end
+
+    it { expect(fit.turrets_dps.sum).to be_within(0.1).of(232.5) }
+  end
   context 'Sleipnir' do
     let :fit do
       ShipFitting.new(ship: Ship.find_by(name: 'Sleipnir'), character: character)

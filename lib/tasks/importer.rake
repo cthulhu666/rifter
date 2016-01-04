@@ -17,5 +17,6 @@ namespace :importer do
     Ship::Trait.setup
     Drone.assign_required_skills
     Drone.classify_drones
+    Ship.assign_required_skills
   end
 end

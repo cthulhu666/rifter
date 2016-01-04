@@ -53,7 +53,6 @@ module Rifter
 
     def skills_map
       @skills_map ||= character_skills.inject({}) { |h, s| h[s.skill.name] = s.level; h }.freeze
-      @skills_map
     end
 
     def skill_level(skill)
@@ -80,6 +79,13 @@ module Rifter
 
     def char_sheet
       @character_sheet ||= api.character_sheet(character_id: eve_id)
+    end
+
+    def flyable_ships(ships: Ship.all)
+      ships.inject([]) do |arr, s|
+        arr << s if s.validate_skills(skills_map).empty?
+        arr
+      end
     end
   end
 end

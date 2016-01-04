@@ -1,7 +1,6 @@
 module Rifter
   module ShipModules
-    class RigMining < ShipModule
-      include Rig
+    class MicroJumpFieldGenerators < ShipModule
     end
   end
 end

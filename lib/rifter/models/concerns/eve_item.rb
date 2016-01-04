@@ -13,6 +13,10 @@ module EveItem
 
     # typeID in db dump
     field :type_id, type: Integer
+    # parentTypeID in invMetaTypes table
+    field :parent_type_id, type: Integer
+    # :metaGroupID in invMetaTypes table
+    field :meta_group_id, type: Integer
 
     embeds_one :miscellaneous_attributes, class_name: 'Rifter::MiscellaneousAttributes'
 

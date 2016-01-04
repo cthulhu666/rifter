@@ -2,8 +2,11 @@ module Rifter
   module Effects
     class ShieldBoosting < Effect
       def effect(_attrs, fitting:, fitted_module:)
-        # attrs.shield_boost += miscellaneous_attributes.shield_bonus / miscellaneous_attributes.duration * 1000.0
-        fail NotImplementedError
+        fitting.boost_attribute(
+          :shield_boost,
+          miscellaneous_attributes.shield_bonus / miscellaneous_attributes.duration * 1000.0,
+          type: :flat
+        )
       end
     end
   end
