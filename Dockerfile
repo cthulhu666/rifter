@@ -12,4 +12,3 @@ WORKDIR /app
 RUN bundle install 
 
 CMD ./bin/console
-

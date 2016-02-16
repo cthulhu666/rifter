@@ -1,9 +1,6 @@
 language: ruby
 rvm:
-  - 2.2.3
-before_install: gem install bundler -v 1.10.6
-services:
-  - mongodb
+  - 2.3.0
+before_install: gem install bundler -v 1.11.2
 before_script:
   - curl -L "$DB_DUMP_URL" | bunzip2 > sqlite-latest.sqlite
-  - bundle exec rake importer:run
