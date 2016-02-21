@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Rifter
   class Item
-    attr_reader :required_skills, :name, :group, :category, :type_id
+    attr_reader :required_skills, :name, :group, :category, :type_id, :attributes, :attributes_by_category
 
     def initialize(inv_type, attributes)
       @inv_type = inv_type

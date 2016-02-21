@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'matrix'
+require 'ostruct'
 
 module Rifter
   DAMAGE_TYPES = [:em, :thermal, :kinetic, :explosive].freeze
@@ -17,9 +18,9 @@ module Rifter
   end
 
   module Turret
-    extend self
-
     DAMAGE_ACCESSORS = DAMAGE_TYPES.map { |d| "#{d}Damage" }.map { |d| -> (m) { m.charge_attribute(d) } }.freeze
+
+    module_function
 
     def volley(mod)
       dmg_multiplier = mod.attribute('damageMultiplier')
@@ -62,6 +63,7 @@ module Rifter
 
   class ProtectionLayer
     attr_reader :ctx
+
     def initialize(ctx)
       @ctx = ctx
     end
@@ -86,6 +88,7 @@ module Rifter
     def resonance_accessors
       fail NotImplementedError
     end
+
     protected :resonance_accessors
   end
 
@@ -140,17 +143,28 @@ module Rifter
     def initialize(dogma_context)
       @ctx = dogma_context
       @modules = []
+      @group_fitted = Hash.new { |h, k| h[k] = { max: 0, current: 0 } }
     end
 
     def ship=(item)
       fail "Ship expected, got: #{item.category}" unless item.category == 'Ship'
       @ctx.set_ship(item.type_id)
+      @ship = item
     end
 
     def add_module(item, charge: nil, state: Dogma::STATE_ACTIVE)
       fail "Module expected, got: #{item.category}" unless item.category == 'Module'
       idx = @ctx.add_module(item.type_id, charge: charge&.type_id, state: state)
       @modules.push FittedModule.new(@ctx, item, idx).freeze
+      check_max_group_fitted(item)
+    end
+
+    def check_max_group_fitted(item)
+      if max = item.attributes['maxGroupFitted']&.value&.to_i
+        h = @group_fitted[item.group]
+        h[:max] = [h[:max], max].max # :)
+        h[:current] += 1
+      end
     end
 
     def ship_attribute(id_or_name)
@@ -159,10 +173,17 @@ module Rifter
     end
 
     def validate
-      [
-        [power_left, 0].min.abs,
-        [cpu_left, 0].min.abs
-      ].sum
+      status = OpenStruct.new
+      status.power = [power_left, 0].min
+      status.cpu = [cpu_left, 0].min
+      status.turrets = [ship_attribute('turretSlotsLeft'), 0].min
+      status.launchers = [ship_attribute('launcherSlotsLeft'), 0].min
+      status.max_group_fitted = 0
+      @group_fitted.each_value do |v|
+        status.max_group_fitted += [v[:max] - v[:current], 0].min
+      end
+      ok = status.to_h.values.all? { |i| i == 0 }
+      [ok, IceNine.deep_freeze(status)]
     end
 
     def shield

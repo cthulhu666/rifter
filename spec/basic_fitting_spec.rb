@@ -9,6 +9,7 @@ RSpec.describe 'Basic fitting' do
   let(:fitting) do
     Rifter::FittingContext.new(ctx)
   end
+  let(:validation) { fitting.validate }
 
   context 'valid Rifter fit' do
     before do
@@ -18,20 +19,45 @@ RSpec.describe 'Basic fitting' do
 
     it { expect(fitting.power_left).to eq 28.75 }
     it { expect(fitting.cpu_left).to eq 127.50 }
-    it { expect(fitting.validate).to eq 0 }
+    it { expect(fitting.validate.first).to be_truthy }
   end
 
-  context 'invalid Rifter fit' do
-    before do
-      fitting.ship = Rifter::ItemStore.find 'Rifter'
-      3.times do
-        fitting.add_module Rifter::ItemStore.find 'Medium Shield Extender II'
+  context 'invalid fit' do
+    context 'power shortage' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        3.times do
+          fitting.add_module Rifter::ItemStore.find 'Medium Shield Extender II'
+        end
       end
+
+      it { expect(validation.last.power).to eq(-16.25) }
+      it { expect(validation.last.cpu).to eq 0 }
+      it { expect(validation.first).to be_falsey }
     end
 
-    it { expect(fitting.power_left).to eq(-16.25) }
-    it { expect(fitting.cpu_left).to eq 57.5 }
-    it { expect(fitting.validate).to be > 0 }
+    context 'high slots shortage' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        5.times do
+          fitting.add_module Rifter::ItemStore.find '200mm AutoCannon II'
+        end
+      end
+
+      it { expect(validation.last.turrets).to eq(-2) }
+      it { expect(validation.first).to be_falsey }
+    end
+
+    context 'max group fitted' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        3.times do
+          fitting.add_module Rifter::ItemStore.find 'Damage Control II'
+        end
+      end
+      it { expect(validation.last.max_group_fitted).to eq(-2) }
+      it { expect(validation.first).to be_falsey }
+    end
   end
 
   describe 'shields' do
@@ -41,7 +67,7 @@ RSpec.describe 'Basic fitting' do
       fitting.add_module Rifter::ItemStore['Damage Control II']
     end
 
-    it { expect(fitting.ship_attribute 'shieldCapacity').to eq 1937.50 }
+    it { expect(fitting.ship_attribute('shieldCapacity')).to eq 1937.50 }
     it 'has correct shield resistances' do
       fitting.shield.resistances.zip([0.125, 0.30, 0.475, 0.5625]).each do |pair|
         expect(pair.first).to be_within(0.0001).of pair.last
