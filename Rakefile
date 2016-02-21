@@ -1,12 +1,12 @@
+# frozen_string_literal: true
 require 'bundler/gem_tasks'
 
-Dir.glob('lib/tasks/*.rake').each {|r| import r}
+Dir.glob('lib/tasks/*.rake').each { |r| import r }
 
 require 'rspec/core/rake_task'
 
 RSpec::Core::RakeTask.new(:spec) do |task|
-  task.rspec_opts = ['--color'] #, '--format', 'nested']
+  task.rspec_opts = ['--color'] # , '--format', 'nested']
 end
 
-task :default => :spec
-
+task default: :spec

@@ -1,21 +1,13 @@
+# frozen_string_literal: true
 module Rifter
   class DamageProfile
-    def initialize(h)
-      h = h.symbolize_keys unless h.is_a?(DamageProfile)
-      args = Damage::DAMAGE_TYPES.inject([]) { |a, e| a << h[e] }
-      @profile = [Damage::DAMAGE_TYPES, normalize(args)].transpose.to_h
-    end
-
-    def [](k)
-      @profile[k.to_sym]
+    def initialize(*splat)
+      fail ArgumentError unless splat.size == DAMAGE_TYPES.size
+      @profile = Vector[*normalize(splat)].freeze
     end
 
     def to_a
-      @profile.to_a
-    end
-
-    def to_h
-      @profile.dup
+      @profile
     end
 
     def normalize(args)
@@ -24,5 +16,7 @@ module Rifter
     end
 
     private :normalize
+
+    DEFAULT = DamageProfile.new(1, 1, 1, 1)
   end
 end

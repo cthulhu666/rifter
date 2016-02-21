@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'bundler/setup'
 require 'rifter'
@@ -10,12 +11,7 @@ require 'rifter'
 # require "pry"
 # Pry.start
 
-require 'irb'
-
-ENV['MONGODB_HOST'] ||= "localhost:#{`docker port rifter_mongodb_1 27017/tcp | grep -Eo '([0-9]{5})$'`}".strip
-Mongoid.load!('mongoid.yml', :development)
 include Rifter
 
 require 'pry'
 Pry.start
-

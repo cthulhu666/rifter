@@ -1,4 +1,5 @@
 # coding: utf-8
+# frozen_string_literal: true
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rifter/version'
@@ -10,8 +11,8 @@ Gem::Specification.new do |spec|
   spec.email         = ['jakub.gluszecki@gmail.com']
 
   spec.summary       = 'Ship Fitting Engine for Eve Online'
-  spec.description   = 'Ship Fitting Engine for Eve Online'
-  spec.homepage      = "https://github.com/cthulhu666/rifter"
+  # spec.description   = 'Ship Fitting Engine for Eve Online'
+  spec.homepage      = 'https://github.com/cthulhu666/rifter'
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
@@ -26,20 +27,18 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'hashie', '~> 3.4'
-  spec.add_dependency 'descriptive_statistics', '~> 2.5'
-  spec.add_dependency 'ruby-progressbar', '~> 1.7.5'
-  spec.add_dependency 'nokogiri', '~> 1.6.7'
+  spec.add_dependency 'ice_nine', '~> 0.11'
 
-  spec.add_development_dependency 'bundler', '~> 1.10'
+  spec.add_development_dependency 'bundler', '~> 1.11'
   spec.add_development_dependency 'rake', '~> 10.0'
 
   spec.add_development_dependency 'rspec'
-  spec.add_development_dependency 'mongoid', '~> 4.0'
   spec.add_development_dependency 'activesupport', '~> 4.2'
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'sequel'
 
-  spec.add_development_dependency "pry"
+  spec.add_development_dependency 'guard'
+  spec.add_development_dependency 'rubocop'
 
+  spec.add_development_dependency 'pry'
 end
