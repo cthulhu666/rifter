@@ -4,18 +4,11 @@
 
 Rifter stands for: "Rifter Is a Fitting Tool, Entirely in Ruby", which is a recursive acronym, how cool is that?
 It is an engine for fitting ships in Eve Online game, packaged as a Ruby gem.
+Well, it's no longer entirely in Ruby. It uses libdogma (https://github.com/osmium-org/libdogma) under the hood.
 
 ## Overview
 
 This gem is extracted from [GenEFT](https://geneft.com) application.
-The engine is only partially implemented.
-Only some subset of ships is supported (no T3 hulls, no capital ships, no mining/hauling hulls).
-Only some subset of effects is supported (no shield/armor reps, work in progress).
-Implants, boosters and fleet effects are not supported and I don't plan to implement them in near future.
-
-You can think of it as 'PyFa in Ruby, without a GUI'.
-
-Rifter denormalizes Eve DB dump into MongoDB database, so it can be a convenient tool if you want to browse Eve data, but don't like to perform twenty three joins to get some piece of data.
 
 ## Acknowledgments
 
@@ -37,7 +30,7 @@ And then execute:
 
 As this gem is pretty much niche, it is not published to RubyGems.
 
-## Usage
+## Usage (WORK IN PROGRESS)
 
 ### Console
 
@@ -75,7 +68,7 @@ Check how much DPS it does:
 f.turrets_dps
 ```
 
-## Development
+## Development (WORK IN PROGRESS)
 
 1. checkout repo
 2. download eve database dump from https://www.fuzzwork.co.uk/dump/sqlite-latest.sqlite.bz2 and unzip it
