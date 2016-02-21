@@ -8,4 +8,6 @@
 /spec/reports/
 /tmp/
 /.idea/
-/db/mongodb/
+/.vagrant/
+/.*sqlite
+
