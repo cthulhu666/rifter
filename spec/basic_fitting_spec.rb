@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 RSpec.describe 'Basic fitting' do
-  before { Dogma::Functions.dogma_init }
   let(:ctx) { Dogma.context }
   after { ctx.destroy! }
 
