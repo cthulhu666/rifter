@@ -153,7 +153,7 @@ module Rifter
     end
 
     def add_module(item, charge: nil, state: Dogma::STATE_ACTIVE)
-      fail "Module expected, got: #{item.category}" unless item.category == 'Module'
+      fail "Module or Subsystem expected, got: #{item.category}" unless item.category.in? %w(Module Subsystem)
       idx = @ctx.add_module(item.type_id, charge: charge&.type_id, state: state)
       @modules.push FittedModule.new(@ctx, item, idx).freeze
       check_max_group_fitted(item)
@@ -182,6 +182,7 @@ module Rifter
       @group_fitted.each_value do |v|
         status.max_group_fitted += [v[:max] - v[:current], 0].min
       end
+      # TODO calibration
       ok = status.to_h.values.all? { |i| i == 0 }
       [ok, IceNine.deep_freeze(status)]
     end
