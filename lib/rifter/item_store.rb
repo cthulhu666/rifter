@@ -11,13 +11,14 @@ module Rifter
       inv_type = inv_type(id).first
       fail 'Not found' if inv_type.nil?
       attributes = attributes(inv_type[:typeID]).map { |e| AttributeValue.new(e) }
-      Item.new(inv_type, attributes)
+      effects = effects(inv_type[:typeID]).map { |e| e[:effectName] }
+      Item.new(inv_type, attributes, effects)
     end
 
     def where(hash)
       inv_type(hash).map do |i|
         attributes = attributes(i[:typeID]).map { |e| AttributeValue.new(e) }
-        Item.new(i, attributes)
+        Item.new(i, attributes, []) # TODO: effects; don't duplicate code
       end
     end
 
@@ -51,11 +52,11 @@ module Rifter
         .all
     end
 
-    #     def effects(type_id)
-    #       db[:dgmTypeEffects]
-    #         .join(:dgmEffects, effectID: :effectID)
-    #         .where(typeID: type_id)
-    #         .select(:effectName, :modifierInfo)
-    #     end
+    def effects(type_id)
+      db[:dgmTypeEffects]
+        .join(:dgmEffects, effectID: :effectID)
+        .where(typeID: type_id)
+        .select(:effectName, :modifierInfo)
+    end
   end
 end

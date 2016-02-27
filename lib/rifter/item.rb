@@ -3,13 +3,13 @@ module Rifter
   class Item
     attr_reader :required_skills, :name, :group, :category, :type_id, :attributes, :attributes_by_category
 
-    def initialize(inv_type, attributes)
+    def initialize(inv_type, attributes, effects)
       @inv_type = inv_type
       @type_id, @name, @group, @category = *inv_type.fetch_values(:typeID, :typeName, :groupName, :categoryName)
       @attributes = attributes.each_with_object({}) { |a, e| e[a.name] = a }
       @attributes_by_category = attributes.group_by(&:category)
       @required_skills = _required_skills if @attributes_by_category['Required Skills']
-      # @effects = effects.map { |e| Effects.load_effect(e) }.compact
+      @effects = effects
       IceNine.deep_freeze! self
     end
 
