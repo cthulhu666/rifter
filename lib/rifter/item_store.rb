@@ -45,7 +45,7 @@ module Rifter
     def attributes(type_id)
       db[:dgmTypeAttributes]
         .join(:dgmAttributeTypes, attributeID: :attributeID)
-        .join(:dgmAttributeCategories, categoryID: :categoryID)
+        .left_join(:dgmAttributeCategories, categoryID: :categoryID)
         .where(typeID: type_id)
         .select(:dgmTypeAttributes__attributeID, :categoryName, :attributeName, :valueInt, :valueFloat, :stackable)
         .all
