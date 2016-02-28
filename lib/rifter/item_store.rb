@@ -64,6 +64,7 @@ module Rifter
     end
 
     def market_groups(market_group_id)
+      return [] if market_group_id.nil?
       group = db[:invMarketGroups].where(marketGroupID: market_group_id).first
       parent_id = group[:parentGroupID]
       return [group] if parent_id.nil?
