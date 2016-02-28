@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 module Rifter
   class Item
-    attr_reader :required_skills, :name, :group, :category, :type_id, :attributes, :attributes_by_category
+    attr_reader :required_skills, :name, :group, :category, :type_id, :attributes, :attributes_by_category, :market_groups
 
-    def initialize(inv_type, attributes, effects)
+    def initialize(inv_type, attributes, effects, market_groups)
       @inv_type = inv_type
       @type_id, @name, @group, @category = *inv_type.fetch_values(:typeID, :typeName, :groupName, :categoryName)
       @attributes = attributes.each_with_object({}) { |a, e| e[a.name] = a }
       @attributes_by_category = attributes.group_by(&:category)
       @required_skills = _required_skills if @attributes_by_category['Required Skills']
       @effects = effects
+      @market_groups = market_groups
       IceNine.deep_freeze! self
     end
 

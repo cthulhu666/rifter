@@ -12,13 +12,14 @@ module Rifter
       fail 'Not found' if inv_type.nil?
       attributes = attributes(inv_type[:typeID]).map { |e| AttributeValue.new(e) }
       effects = effects(inv_type[:typeID]).map { |e| e[:effectName] }
-      Item.new(inv_type, attributes, effects)
+      market_groups = market_groups(inv_type[:marketGroupID]).map { |e| e[:marketGroupName]}.reverse
+      Item.new(inv_type, attributes, effects, market_groups)
     end
 
     def where(hash)
       inv_type(hash).map do |i|
         attributes = attributes(i[:typeID]).map { |e| AttributeValue.new(e) }
-        Item.new(i, attributes, []) # TODO: effects; don't duplicate code
+        Item.new(i, attributes, [], []) # TODO: effects; don't duplicate code
       end
     end
 
@@ -31,7 +32,7 @@ module Rifter
     def inv_type(type_id_or_hash)
       hash = case type_id_or_hash
              when Fixnum
-               { typeID: type_id_or_hash }
+               { invTypes__typeID: type_id_or_hash }
              when String
                { typeName: type_id_or_hash }
              when Hash
@@ -40,7 +41,10 @@ module Rifter
       db[:invTypes]
         .join(:invGroups, groupID: :groupID)
         .join(:invCategories, categoryID: :categoryID)
-        .where(hash)
+        .left_join(:invMetaTypes, invTypes__typeID: :invMetaTypes__typeID)
+        .left_join(:invMetaGroups, metaGroupID: :metaGroupID)
+        .where(hash).select(:invTypes__typeID, :invTypes__marketGroupID, :invTypes__typeName,
+                            :invGroups__groupName, :invCategories__categoryName)
     end
 
     def attributes(type_id)
@@ -57,6 +61,13 @@ module Rifter
         .join(:dgmEffects, effectID: :effectID)
         .where(typeID: type_id)
         .select(:effectName, :modifierInfo)
+    end
+
+    def market_groups(market_group_id)
+      group = db[:invMarketGroups].where(marketGroupID: market_group_id).first
+      parent_id = group[:parentGroupID]
+      return [group] if parent_id.nil?
+      [group] + market_groups(parent_id)
     end
   end
 end
