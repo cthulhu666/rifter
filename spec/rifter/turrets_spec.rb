@@ -2,8 +2,7 @@
 require 'spec_helper'
 
 RSpec.describe Rifter::FittingContext do
-  let(:ctx) { Dogma.context }
-  after { ctx.destroy! }
+  include_context 'dogma'
 
   let(:fitting) do
     Rifter::FittingContext.new(ctx)
