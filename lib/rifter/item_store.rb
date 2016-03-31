@@ -23,6 +23,12 @@ module Rifter
       end
     end
 
+    def random
+      skip = rand Rifter::DB[:invTypes].count
+      id = Rifter::DB[:invTypes].offset(skip).limit(1).select_map(:typeId).first
+      find(id)
+    end
+
     private
 
     def db
