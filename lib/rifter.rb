@@ -4,6 +4,7 @@ require 'active_support/core_ext/object/inclusion'
 
 require 'sequel'
 require 'ice_nine'
+require 'deterministic'
 
 require 'dogma'
 

@@ -11,13 +11,13 @@ RSpec.describe 'Basic fitting' do
 
   context 'valid Rifter fit' do
     before do
-      fitting.ship = Rifter::ItemStore.find 'Rifter'
-      fitting.add_module Rifter::ItemStore.find 'Medium Shield Extender II'
+      fitting.ship = Rifter::ItemStore['Rifter']
+      fitting.add_module Rifter::ItemStore['Medium Shield Extender II']
     end
 
     it { expect(fitting.power_left).to eq 28.75 }
     it { expect(fitting.cpu_left).to eq 127.50 }
-    it { expect(fitting.validate.first).to be_truthy }
+    it { expect(fitting.validate).to be_success }
   end
 
   context 'invalid fit' do
@@ -29,9 +29,9 @@ RSpec.describe 'Basic fitting' do
         end
       end
 
-      it { expect(validation.last.power).to eq(-16.25) }
-      it { expect(validation.last.cpu).to eq 0 }
-      it { expect(validation.first).to be_falsey }
+      it { expect(validation.value.power).to eq(-16.25) }
+      it { expect(validation.value.cpu).to eq 0 }
+      it { expect(validation).to be_failure }
     end
 
     context 'high slots shortage' do
@@ -42,8 +42,8 @@ RSpec.describe 'Basic fitting' do
         end
       end
 
-      it { expect(validation.last.turrets).to eq(-2) }
-      it { expect(validation.first).to be_falsey }
+      it { expect(validation.value.turrets).to eq(-2) }
+      it { expect(validation).to be_failure }
     end
 
     context 'max group fitted' do
@@ -53,8 +53,8 @@ RSpec.describe 'Basic fitting' do
           fitting.add_module Rifter::ItemStore.find 'Damage Control II'
         end
       end
-      it { expect(validation.last.max_group_fitted).to eq(-2) }
-      it { expect(validation.first).to be_falsey }
+      it { expect(validation.value.max_group_fitted).to eq(-2) }
+      it { expect(validation).to be_failure }
     end
   end
 

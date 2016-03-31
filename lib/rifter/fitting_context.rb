@@ -183,8 +183,12 @@ module Rifter
         status.max_group_fitted += [v[:max] - v[:current], 0].min
       end
       # TODO calibration
-      ok = status.to_h.values.all? { |i| i == 0 }
-      [ok, IceNine.deep_freeze(status)]
+      if status.to_h.values.all? { |i| i == 0 }
+        Deterministic::Result::Success status
+      else
+        Deterministic::Result::Failure status
+      end
+
     end
 
     def shield

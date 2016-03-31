@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activesupport', '~> 4.2'
   spec.add_dependency 'sqlite3'
   spec.add_dependency 'sequel'
+  spec.add_dependency 'deterministic'
 
   spec.add_development_dependency 'guard'
   spec.add_development_dependency 'rubocop'
