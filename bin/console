@@ -12,6 +12,7 @@ require 'rifter'
 # Pry.start
 
 include Rifter
+Dogma::Functions.dogma_init
 
 require 'pry'
 Pry.start
