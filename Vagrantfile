@@ -9,6 +9,6 @@ Vagrant.configure(2) do |config|
   config.vm.provision :shell, path: 'install-ruby.sh', args: '2.3.0', privileged: false
   config.vm.provision :shell, path: 'install-libdogma.sh',
       env: {
-          LIBDOGMA_URL: 'https://github.com/osmium-org/libdogma/releases/download/v1.2.0-fro10/libdogma-1.2.0-fro10.tar.xz'
+          LIBDOGMA_URL: 'https://github.com/osmium-org/libdogma/releases/download/v1.2.0-cit10/libdogma-1.2.0-cit10.tar.xz'
       }
 end
