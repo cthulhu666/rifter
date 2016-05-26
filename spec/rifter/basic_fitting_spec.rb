@@ -74,12 +74,12 @@ RSpec.describe 'Basic fitting' do
 
     context 'with uniform damage profile' do
       let(:dmg_profile) { Rifter::DamageProfile::DEFAULT }
-      it { expect(fitting.effective_hp(dmg_profile)).to be_within(0.1).of(5128.3) }
+      it { expect(fitting.effective_hp(dmg_profile)).to be_within(0.1).of(5122.9) }
     end
 
     context 'with Blood Raiders damage profile' do
       let(:dmg_profile) { Rifter::DamageProfile.new(50, 48, 2, 0) }
-      it { expect(fitting.effective_hp(dmg_profile)).to be_within(0.1).of(4820.8) }
+      it { expect(fitting.effective_hp(dmg_profile)).to be_within(0.1).of(4815.3) }
     end
   end
 end
