@@ -138,12 +138,11 @@ module Rifter
   end
 
   class FittingContext
-    attr_reader :modules
-
     def initialize(dogma_context)
       @ctx = dogma_context
       @modules = []
       @group_fitted = Hash.new { |h, k| h[k] = { max: 0, current: 0 } }
+      @modules_by_slot = Hash.new { |h, key| h[key] = [] }
     end
 
     def ship=(item)
@@ -155,7 +154,9 @@ module Rifter
     def add_module(item, charge: nil, state: Dogma::STATE_ACTIVE)
       fail "Module or Subsystem expected, got: #{item.category}" unless item.category.in? %w(Module Subsystem)
       idx = @ctx.add_module(item.type_id, charge: charge&.type_id, state: state)
-      @modules.push FittedModule.new(@ctx, item, idx).freeze
+      mod = FittedModule.new(@ctx, item, idx).freeze
+      @modules.push mod
+      @modules_by_slot[item.slot].push mod
       check_max_group_fitted(item)
     end
 
@@ -172,6 +173,12 @@ module Rifter
       @ctx.ship_attribute id
     end
 
+    # TODO: it should return a copy, or @modules and @modules_by_slot should be frozen
+    def modules(slot = nil)
+      return @modules if slot.nil?
+      @modules_by_slot[slot.to_sym]
+    end
+
     def validate
       status = OpenStruct.new
       status.power = [power_left, 0].min
@@ -183,6 +190,7 @@ module Rifter
         status.max_group_fitted += [v[:max] - v[:current], 0].min
       end
       validate_rigs(status)
+      validate_slots(status)
       if status.to_h.values.all? { |i| i == 0 }
         Deterministic::Result::Success status
       else
@@ -201,6 +209,24 @@ module Rifter
       calibration_used = rigs.inject(0) { |a, r| a + r.attribute('upgradeCost') }
       calibration_available = ship_attribute('upgradeCapacity')
       status.calibration = [0, calibration_available - calibration_used].min
+    end
+
+    # TODO: can it be done on dogma level?
+    def validate_slots(status)
+      [:lo, :med, :hi, :rig].each do |s|
+        slots_used = modules(s).size
+        slots_available = slots_available(s)
+        status["#{s}_slots"] = [0, slots_available - slots_used].min
+      end
+    end
+
+    def slots_available(slot)
+      case slot
+      when :lo
+        ship_attribute('lowSlots').to_i
+      when :med, :hi, :rig
+        ship_attribute("#{slot}Slots").to_i
+      end
     end
 
     def rigs

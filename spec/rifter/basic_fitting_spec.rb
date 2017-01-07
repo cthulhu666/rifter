@@ -56,6 +56,50 @@ RSpec.describe 'Basic fitting' do
       it { expect(validation).to be_failure }
     end
 
+    context 'used more lo slots than available' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        4.times do
+          fitting.add_module Rifter::ItemStore['Power Diagnostic System II']
+        end
+      end
+      it { expect(validation).to be_failure }
+      it { expect(validation.value.lo_slots).to eq(-1) }
+    end
+
+    context 'used more med slots than available' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        4.times do
+          fitting.add_module Rifter::ItemStore['Small Shield Extender II']
+        end
+      end
+      it { expect(validation).to be_failure }
+      it { expect(validation.value.med_slots).to eq(-1) }
+    end
+
+    context 'used more hi slots than available' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        5.times do
+          fitting.add_module Rifter::ItemStore['200mm AutoCannon II']
+        end
+      end
+      it { expect(validation).to be_failure }
+      it { expect(validation.value.hi_slots).to eq(-1) }
+    end
+
+    context 'used more rig slots than available' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        5.times do
+          fitting.add_module Rifter::ItemStore['Small Drone Control Range Augmentor II']
+        end
+      end
+      it { expect(validation).to be_failure }
+      it { expect(validation.value.rig_slots).to eq(-2) }
+    end
+
     context 'max group fitted' do
       before do
         fitting.ship = Rifter::ItemStore.find 'Rifter'
