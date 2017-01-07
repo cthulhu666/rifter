@@ -4,7 +4,7 @@ module Rifter
     AttributeNotFound = Class.new(StandardError)
 
     def self.[](name)
-      attributes[name.to_s] || fail(AttributeNotFound, name)
+      attributes[name.to_s] || fail(AttributeNotFound, "Attribute not found: #{name}")
     end
 
     def self.attributes
