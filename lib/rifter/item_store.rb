@@ -12,7 +12,7 @@ module Rifter
       fail 'Not found' if inv_type.nil?
       attributes = attributes(inv_type[:typeID]).map { |e| AttributeValue.new(e) }
       effects = effects(inv_type[:typeID]).map { |e| e[:effectName] }
-      market_groups = market_groups(inv_type[:marketGroupID]).map { |e| e[:marketGroupName]}.reverse
+      market_groups = market_groups(inv_type[:marketGroupID]).map { |e| e[:marketGroupName] }.reverse
       Item.new(inv_type, attributes, effects, market_groups)
     end
 

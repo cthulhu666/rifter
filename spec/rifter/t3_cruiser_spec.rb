@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 RSpec.describe 'T3 cruisers' do
@@ -20,10 +21,9 @@ RSpec.describe 'T3 cruisers' do
     it { expect(fitting.ship_attribute 'cpuOutput').to be_within(0.1).of(707.8) }
     it { expect(fitting.ship_attribute 'powerOutput').to be_within(0.1).of(750.0) }
     # TODO: why it fails, and why is it so slow
-    #it { expect(fitting.ship_attribute 'launcherSlotsLeft').to eq 6 }
-    #it { expect(fitting.ship_attribute 'hiSlots').to eq 6 }
-    #it { expect(fitting.ship_attribute 'medSlots').to eq 6 }
-    #it { expect(fitting.ship_attribute 'lowSlots').to eq 4 }
+    # it { expect(fitting.ship_attribute 'launcherSlotsLeft').to eq 6 }
+    # it { expect(fitting.ship_attribute 'hiSlots').to eq 6 }
+    # it { expect(fitting.ship_attribute 'medSlots').to eq 6 }
+    # it { expect(fitting.ship_attribute 'lowSlots').to eq 4 }
   end
-
 end

@@ -188,7 +188,6 @@ module Rifter
       else
         Deterministic::Result::Failure status
       end
-
     end
 
     # TODO: can it be done on dogma level?
