@@ -46,6 +46,16 @@ RSpec.describe 'Basic fitting' do
       it { expect(validation).to be_failure }
     end
 
+    context 'calibration shortage' do
+      before do
+        fitting.ship = Rifter::ItemStore.find 'Rifter'
+        3.times do
+          fitting.add_module Rifter::ItemStore['Small Drone Control Range Augmentor II']
+        end
+      end
+      it { expect(validation).to be_failure }
+    end
+
     context 'max group fitted' do
       before do
         fitting.ship = Rifter::ItemStore.find 'Rifter'
