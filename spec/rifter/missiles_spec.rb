@@ -23,7 +23,8 @@ RSpec.describe Rifter::FittingContext do
 
   describe 'dps and stuff...' do
     before do
-      fitting.ship = Rifter::ItemStore.find 'Kestrel'
+      fitting.ship = Rifter::ItemStore['Kestrel']
+      fitting.add_module Rifter::ItemStore['Small Anti-Thermal Screen Reinforcer II']
       4.times do
         fitting.add_module Rifter::ItemStore.find('Rocket Launcher II'),
                            charge: Rifter::ItemStore.find('Scourge Rocket'),

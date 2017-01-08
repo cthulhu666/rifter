@@ -9,7 +9,11 @@ module Rifter
       @type_id, @name, @group, @category = *inv_type.fetch_values(:typeID, :typeName, :groupName, :categoryName)
       @attributes = attributes.each_with_object({}) { |a, e| e[a.name] = a }
       @attributes_by_category = attributes.group_by(&:category)
-      @required_skills = _required_skills if @attributes_by_category['Required Skills']
+      @required_skills = if @attributes_by_category['Required Skills']
+                           _required_skills
+                         else
+                           {}
+                         end
       @effects = effects
       @market_groups = market_groups
       @slot = determine_slot(effects, market_groups)
