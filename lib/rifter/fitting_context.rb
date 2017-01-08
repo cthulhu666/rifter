@@ -5,24 +5,31 @@ require 'ostruct'
 module Rifter
   DAMAGE_TYPES = [:em, :thermal, :kinetic, :explosive].freeze
 
-  class FittedModule < Struct.new(:ctx, :item, :idx)
+  class FittedModule < Struct.new(:ctx, :item, :idx, :charge)
     def attribute(id_or_name)
       id = id_or_name.is_a?(Fixnum) ? id_or_name : Attributes[id_or_name]
       ctx.module_attribute id, idx
     end
 
     def charge_attribute(id_or_name)
+      return nil unless has_charge?
       id = id_or_name.is_a?(Fixnum) ? id_or_name : Attributes[id_or_name]
       ctx.charge_attribute id, idx
+    end
+
+    def has_charge?
+      !charge.nil?
     end
   end
 
   module Turret
     DAMAGE_ACCESSORS = DAMAGE_TYPES.map { |d| "#{d}Damage" }.map { |d| -> (m) { m.charge_attribute(d) } }.freeze
+    NULL_VOLLEY = Vector[*([0] * DAMAGE_TYPES.size)].freeze
 
     module_function
 
     def volley(mod)
+      return NULL_VOLLEY unless mod.has_charge?
       dmg_multiplier = mod.attribute('damageMultiplier')
       Vector[*DAMAGE_ACCESSORS.map { |a| a.call(mod) * dmg_multiplier }]
     end
@@ -37,10 +44,12 @@ module Rifter
 
   module Launcher
     DAMAGE_ACCESSORS = DAMAGE_TYPES.map { |d| "#{d}Damage" }.map { |d| -> (m) { m.charge_attribute(d) } }.freeze
+    NULL_VOLLEY = Vector[*([0] * DAMAGE_TYPES.size)].freeze
 
     module_function
 
     def volley(mod)
+      return NULL_VOLLEY unless mod.has_charge?
       dmg_multiplier = mod.attribute('damageMultiplier')
       Vector[*DAMAGE_ACCESSORS.map { |a| a.call(mod) * dmg_multiplier }]
     end
@@ -154,7 +163,7 @@ module Rifter
     def add_module(item, charge: nil, state: Dogma::STATE_ACTIVE)
       fail "Module or Subsystem expected, got: #{item.category}" unless item.category.in? %w(Module Subsystem)
       idx = @ctx.add_module(item.type_id, charge: charge&.type_id, state: state)
-      mod = FittedModule.new(@ctx, item, idx).freeze
+      mod = FittedModule.new(@ctx, item, idx, charge).freeze
       @modules.push mod
       @modules_by_slot[item.slot].push mod
       check_max_group_fitted(item)

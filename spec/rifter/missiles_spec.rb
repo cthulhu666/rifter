@@ -21,6 +21,19 @@ RSpec.describe Rifter::FittingContext do
     it { expect(fitting.launchers.size).to eq 4 }
   end
 
+  describe 'launcher without charges' do
+    before do
+      fitting.ship = Rifter::ItemStore['Kestrel']
+      fitting.add_module Rifter::ItemStore['Rocket Launcher II'],
+                         charge: nil,
+                         state: Dogma::STATE_ACTIVE
+      fitting.add_module Rifter::ItemStore['Rocket Launcher II'],
+                         charge: Rifter::ItemStore['Scourge Rocket'],
+                         state: Dogma::STATE_ACTIVE
+    end
+    it { expect(fitting.launchers_dps.sum).to be_within(0.01).of(20.60) }
+  end
+
   describe 'dps and stuff...' do
     before do
       fitting.ship = Rifter::ItemStore['Kestrel']
