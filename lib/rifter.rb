@@ -16,6 +16,7 @@ require 'rifter/fitting_context'
 require 'rifter/attributes'
 require 'rifter/skills'
 require 'rifter/damage_profile'
+require 'rifter/fitting_validator'
 
 module Rifter
   DB = Sequel.connect('sqlite://sqlite-latest.sqlite')

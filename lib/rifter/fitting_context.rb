@@ -188,47 +188,6 @@ module Rifter
       @modules_by_slot[slot.to_sym]
     end
 
-    def validate
-      status = OpenStruct.new
-      status.power = [power_left, 0].min
-      status.cpu = [cpu_left, 0].min
-      status.turrets = [ship_attribute('turretSlotsLeft'), 0].min
-      status.launchers = [ship_attribute('launcherSlotsLeft'), 0].min
-      status.max_group_fitted = 0
-      @group_fitted.each_value do |v|
-        status.max_group_fitted += [v[:max] - v[:current], 0].min
-      end
-      validate_rigs(status)
-      validate_slots(status)
-      if status.to_h.values.all? { |i| i == 0 }
-        Deterministic::Result::Success status
-      else
-        Deterministic::Result::Failure status
-      end
-    end
-
-    # TODO: can it be done on dogma level?
-    def validate_rigs(status)
-      status.wrong_size_rigs = 0
-      rigs.each do |r|
-        if r.attribute('rigSize') != ship_attribute('rigSize')
-          status.wrong_size_rigs += 1
-        end
-      end
-      calibration_used = rigs.inject(0) { |a, r| a + r.attribute('upgradeCost') }
-      calibration_available = ship_attribute('upgradeCapacity')
-      status.calibration = [0, calibration_available - calibration_used].min
-    end
-
-    # TODO: can it be done on dogma level?
-    def validate_slots(status)
-      [:lo, :med, :hi, :rig].each do |s|
-        slots_used = modules(s).size
-        slots_available = slots_available(s)
-        status["#{s}_slots"] = [0, slots_available - slots_used].min
-      end
-    end
-
     def slots_available(slot)
       case slot
       when :lo
